@@ -1,10 +1,20 @@
-import time
-
 import torch
-import torch.nn.functional as F
-from torchvision import models
+from torchvision import transforms
 import cv2
 import platform
+from PIL import Image
+
+
+def generate_input_frame(frame):
+    grayscale_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert to grayscale
+    grayscale_frame = Image.fromarray(grayscale_frame)  # convert tp PIL image
+    frame_transforms = transforms.Compose([
+        transforms.Grayscale(num_output_channels=1),  # turn the graph to single color channel
+        transforms.Resize((48, 48)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5], std=[0.5])  # normalize
+    ])
+    return frame_transforms(grayscale_frame)
 
 
 def camera():
@@ -28,9 +38,9 @@ def camera():
 
         cv2.imshow('camera', frame)  # render frame
 
-        grayscale_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert to grayscale
+        input_frame = generate_input_frame(frame).unsqueeze(0).to(device)
 
-        # call model here, use grayscale_frame as image input
+        # call model here, use input_frame as image input
 
     capture.release()
 
