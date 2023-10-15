@@ -3,6 +3,12 @@
 # Abstract:
 The project's objective is to train a CNN (Convolutional Neural Network) model capable of accurately distinguishing human facial expressions. Our target is to achieve a minimum accuracy rate of 95%. The ultimate aim is to implement this model in user interface design and mental health monitoring applications.
 
+# Project Requirement
+1. Collect and preprocess the facial expression dataset. (5)
+2. Implement a basic emotion recognition model using CNNs. (20)
+3. Optimize the model for better performance. (45)
+4. Evaluate the model’s performance and integrate it with a real-time webcam feed. (30)
+
 # 1. Dataset:
 We utilize the FER-2013 dataset, comprising a training subset and a testing subset. Our approach involves training a CNN on the training set and evaluating its performance using the testing set.
 
