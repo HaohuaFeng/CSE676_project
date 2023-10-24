@@ -1,11 +1,9 @@
-from time import sleep
-
 import torch
 from torchvision import transforms
 import cv2
 import platform
 from PIL import Image
-import model
+from models import model_1 as model
 
 
 def generate_input_frame(frame):
@@ -29,9 +27,9 @@ def camera():
     capture = cv2.VideoCapture(default_capture_device)
     capture.open(0)  # turn on capture device
 
-    lables = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+    labels = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
 
-    m = model.model()
+    m = model.EmotionCNN(num_classes=7)
     m.to(device)
 
     while capture.isOpened():
@@ -48,8 +46,9 @@ def camera():
         cv2.imshow('camera', frame)  # render frame
 
         output = m(input_frame)
-        _, predicted = torch.max(output.data, 1)
-        print("Prediction:", lables[predicted[0]])
+        predicted = output.argmax(dim=1)
+        print("Prediction:", labels[predicted])
+
     capture.release()
 
 
