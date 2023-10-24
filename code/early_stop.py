@@ -27,3 +27,7 @@ class EarlyStop:
             self.best = validation_loss
             self.save_model(validation_loss, new_model)
             self.counter = 0
+
+        if self.stop_count <= self.counter:
+            self.counter = 0
+            self.best = None
