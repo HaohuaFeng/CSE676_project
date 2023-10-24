@@ -11,7 +11,7 @@ pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
 # criterion = nn.CrossEntropyLoss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=0.0001, momentum=0.9)
+# optimizer = torch.optim.SGD(model.parameters(), lr=0.0002, momentum=0.9)
 
 
 class EmotionCNN(nn.Module):
