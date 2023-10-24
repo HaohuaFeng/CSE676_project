@@ -74,22 +74,22 @@ class EmotionCNN(nn.Module):
             nn.BatchNorm1d(4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(4096, 2048),
-            nn.BatchNorm1d(2048),
+            nn.Linear(4096, 4096),
+            nn.BatchNorm1d(4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(2048, 1024),
-            nn.BatchNorm1d(1024),
+            nn.Linear(4096, 4096),
+            nn.BatchNorm1d(4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(1024, 512),
-            nn.BatchNorm1d(128),
+            nn.Linear(4096, 4096),
+            nn.BatchNorm1d(4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(128, 32),
-            nn.BatchNorm1d(32),
+            nn.Linear(4096, 4096),
+            nn.BatchNorm1d(4096),
             nn.ReLU(inplace=True),
-            nn.Linear(32, num_classes), )
+            nn.Linear(4096, num_classes), )
 
     def forward(self, x):
         x = self.features(x)

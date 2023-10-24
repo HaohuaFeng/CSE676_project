@@ -13,7 +13,7 @@ class EarlyStop:
 
     def save(self, model, loss):
         self.min_loss = loss
-        torch.save(model.s, self.path)
+        torch.save(model.state_dict(), self.path)
 
     def check_status(self, model, loss):
         if self.best_loss is None:
