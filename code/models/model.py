@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 
 # todo: we should compare the optimal version with the previous ones
