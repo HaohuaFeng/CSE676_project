@@ -2,11 +2,12 @@ import torch
 import pickle
 
 
-def select_devices():
+def select_devices(use_cudnn_if_avaliable):
     if torch.cuda.is_available():
         # Enable cuDNN auto-tuner
-        torch.backends.cudnn.enabled = True
-        torch.backends.cudnn.benchmark = True
+        if use_cudnn_if_avaliable:
+            torch.backends.cudnn.enabled = True
+            torch.backends.cudnn.benchmark = True
         print("using CUDA + cudnn")
         return torch.device("cuda:0")
     elif torch.backends.mps.is_available():
