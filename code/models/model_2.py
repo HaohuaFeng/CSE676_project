@@ -5,13 +5,13 @@ import torch.nn as nn
 # reference: AlexNet
 
 # initialize loss-function and optimizer
-model_name = 'Alex_FC16'
+model_name = 'Alex'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
 # criterion = nn.CrossEntropyLoss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=0.0002, momentum=0.9)
+# optimizer = torch.optim.Adam(model.parameters(), lr=0.000001)
 
 
 class EmotionCNN(nn.Module):
@@ -52,67 +52,54 @@ class EmotionCNN(nn.Module):
             nn.Dropout(),
             nn.Linear(256 * 6 * 6, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
+            # 4
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
+            # 8
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            nn.Tanh(),
+            # 12
             nn.Linear(4096, num_classes), )
 
     def forward(self, x):
