@@ -2,6 +2,9 @@ import torch
 
 
 class EarlyStop:
+    """use to determine early stop
+        >>> EarlyStop(path to store model, stop count, different, type  = "loss" or "accuracy")
+    """
     def __init__(self, path, stop_count, diff, type = "loss"):
         self.path = path
         self.stop_count = stop_count
@@ -27,6 +30,7 @@ class EarlyStop:
             if self.counter >= self.stop_count:
                 self.early_stop = True
                 self.best_value = None
+                self.counter = 0
         elif self.type == "accuracy" and value < self.best_value + self.different:
             self.counter += 1
             if self.counter >= self.stop_count:
