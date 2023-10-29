@@ -5,7 +5,7 @@ import torch.nn as nn
 # reference: AlexNet
 
 # initialize loss-function and optimizer
-model_name = 'Alex_Sigmoid_256x4'
+model_name = 'Alex_Tanh_256x4'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
@@ -52,19 +52,19 @@ class EmotionCNN(nn.Module):
             nn.Dropout(),
             nn.Linear(256 * 6 * 6, 256),
             nn.BatchNorm1d(256),
-            nn.Sigmoid(),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Sigmoid(),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Sigmoid(),
+            nn.Tanh(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Sigmoid(),
+            nn.Tanh(),
             nn.Linear(256, num_classes), )
 
     def forward(self, x):
