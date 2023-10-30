@@ -55,6 +55,7 @@ def model_validation(model, device, data_loader, pth_path):
 
 
 def plot_record(x, y, xlabel, ylabel, title, save_path):
+    plt.clf()
     plt.plot(x, y)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
