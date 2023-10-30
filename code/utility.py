@@ -28,6 +28,12 @@ def save_pickle_files(data, path):
         pickle.dump(data, f)
 
 
+def read_pickle_files(path):
+    with open(path, 'rb') as f:
+        data = pickle.load(f)
+    return data
+
+
 def model_validation(model, device, data_loader, pth_path):
     model.load_state_dict(torch.load(pth_path))
     model.to(device)
