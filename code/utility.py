@@ -1,5 +1,6 @@
 import torch
 import pickle
+import matplotlib.pyplot as plt
 
 
 def select_devices(use_cudnn_if_avaliable):
@@ -45,3 +46,12 @@ def model_validation(model, device, data_loader, pth_path):
 
     accuracy = 100 * correct / total
     print(f"Test Accuracy: {accuracy}%")
+
+
+def plot_record(x, y, xlabel, ylabel, title, save_path):
+    plt.plot(x, y)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.savefig(save_path)
+    plt.show
