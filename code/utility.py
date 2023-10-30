@@ -61,4 +61,4 @@ def plot_record(x, y, xlabel, ylabel, title, save_path):
     plt.ylabel(ylabel)
     plt.title(title)
     plt.savefig(save_path)
-    plt.show
+    plt.show()
