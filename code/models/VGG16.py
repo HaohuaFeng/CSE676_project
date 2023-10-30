@@ -6,6 +6,7 @@ pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
+# optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes=7):
