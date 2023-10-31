@@ -5,7 +5,7 @@ import torch.nn as nn
 # reference: AlexNet
 
 # initialize loss-function and optimizer
-model_name = 'Alex_Sigmoid_256x4'
+model_name = 'Alex_256_sigmoid_SGD_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name

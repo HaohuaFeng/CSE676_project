@@ -55,7 +55,7 @@ def camera(width=1920, high=1080):
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             face_image = None
-            faces = face_detect.detectMultiScale(gray, scaleFactor=1.25, minNeighbors=4, minSize=(50, 50))
+            faces = face_detect.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=3, minSize=(50, 50))
             for (x, y, w, h) in faces:
                 face_image = frame[y:y+h, x:x+w]
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)

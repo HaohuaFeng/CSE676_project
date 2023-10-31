@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-model_name = 'VGG19_4096x4096x7'
+model_name = 'VGG19_4096x4096x7_ADAM_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name

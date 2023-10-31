@@ -25,17 +25,18 @@ class EarlyStop:
             self.best_value = value
             self.save(model, value)
             self.early_stop = False
-        elif self.type == "loss" and (- value) < (- self.best_value + self.different):
+        elif self.type == "loss" and value >= self.best_value - self.different:
             self.counter += 1
             if self.counter >= self.stop_count:
                 self.early_stop = True
-                self.best_value = None
+                # self.best_value = None
                 self.counter = 0
-        elif self.type == "accuracy" and value < self.best_value + self.different:
+        elif self.type == "accuracy" and value <= self.best_value + self.different:
             self.counter += 1
             if self.counter >= self.stop_count:
                 self.early_stop = True
-                self.best_value = None
+                # self.best_value = None
+                self.counter = 0
         else:
             self.best_value = value
             self.save(model, value)
