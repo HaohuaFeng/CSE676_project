@@ -53,7 +53,8 @@ class EmotionCNN(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(1),
-            # flatten from channel, ex: [batch_size, channels(1), height, width] -> [batch_size, channels * height * width]
+            # flatten from channel, ex: [batch_size, channels(1), height, width] -> [batch_size, channels * height *
+            # width]
             nn.Linear(256 * 6 * 6, 128),
             nn.ELU(inplace=True),
             nn.BatchNorm1d(128),
