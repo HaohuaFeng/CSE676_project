@@ -1,6 +1,7 @@
 import torch
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def select_devices(use_cudnn_if_avaliable):
@@ -57,7 +58,15 @@ def model_validation(model, device, data_loader, pth_path):
 def plot_record(x, y, xlabel, ylabel, title, save_path):
     plt.clf()
     plt.plot(x, y)
-    plt.scatter(x, y, s=1)
+    # plt.scatter(x, y, s=1)
+    lowest_idx = y.index(min(y))
+    highest_idx = y.index(max(y))
+    plt.scatter(x[lowest_idx], y[lowest_idx], c='red', marker='o', s=10, label='Lowest')
+    plt.scatter(x[highest_idx], y[highest_idx], c='blue', marker='o', s=10, label='Highest')
+    plt.text(x[lowest_idx], y[lowest_idx], f'X:{x[lowest_idx]}, Y:{y[lowest_idx]:.2f}', 
+             fontsize=12, ha='right', va='bottom', color='red')
+    plt.text(x[highest_idx], y[highest_idx], f'X:{x[highest_idx]}, Y:{y[highest_idx]:.2f}', 
+             fontsize=12, ha='left', va='top', color='blue')
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
