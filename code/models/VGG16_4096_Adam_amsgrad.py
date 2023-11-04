@@ -1,10 +1,15 @@
 import torch
 import torch.nn as nn
 
-model_name = 'VGG19_4096x4096x7_ADAM_lr0001'
+model_name = 'VGG16_4096_Adam_amsgrad_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
+
+# optimizer
+# Adam + amsgrad
+# amsgrad=True -> stablize gradient descentamsgrad=True
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, amsgrad=True)
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes=7):
@@ -29,8 +34,6 @@ class EmotionCNN(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
 
             nn.Conv2d(256, 512, kernel_size=3, padding=1),
@@ -39,11 +42,8 @@ class EmotionCNN(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
@@ -69,4 +69,3 @@ class EmotionCNN(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
-

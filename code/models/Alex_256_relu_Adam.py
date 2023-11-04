@@ -5,12 +5,14 @@ import torch.nn as nn
 # reference: AlexNet
 
 # initialize loss-function and optimizer
-model_name = 'Alex_256_tanh_ADAM_lr0001'
+model_name = 'Alex_256_relu_Adam_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
-# criterion = nn.CrossEntropyLoss()
+# optimizer
+# Adam
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 
 class EmotionCNN(nn.Module):
@@ -51,19 +53,19 @@ class EmotionCNN(nn.Module):
             nn.Dropout(),
             nn.Linear(256 * 6 * 6, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
             nn.Linear(256, num_classes), )
 
     def forward(self, x):

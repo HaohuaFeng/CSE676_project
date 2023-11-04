@@ -6,11 +6,15 @@ import torch.nn as nn
 # reference: Customized-CNN
 
 # initialize loss-function and optimizer
-model_name = 'Customized-cnn_ELU_ADAM_lr0001'
+model_name = 'Customized-cnn_ELU_SGD_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
+# optimizer
+# Adam + amsgrad
+# amsgrad=True -> stablize gradient descentamsgrad=True
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, amsgrad=True)
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes):

@@ -21,3 +21,19 @@ We utilize the FER-2013 dataset, comprising a training subset and a testing subs
 # 5. Metrics and Experimental Results:
 
 # 6. Contributions and GitHub:
+
+# comparation between models:
+## model: AlexNet + Activation Function on FC + Optimizer
+## 1. AlexNet-256 + sigmoid + Adam (Win) v.s. AlexNet-256 + sigmoid + SGD
+## 2. AlexNet-256 + Tanh + Adam (Win) v.s. AlexNet-256 + Tanh + SGD
+## 3. AlexNet-256 + Relu + Adam v.s. AlexNet-256 + Relu + SGD (?)
+## => AlexNet-256 + sigmoid + Adam v.s. AlexNet-256 + Tanh + Adam v.s. (3.) (?)
+## so we should use Adam + (Tanh or Relu). Then we move to 4096 layer
+## 3. AlexNet-4096 + Relu + Adam (Win) v.s. AlexNet-4096 + Tanh + Adam
+## then we compare AlexNet-4096 vs Alec-256, and select the winner.
+
+# model: VGG16 + Adam v.s. VGG16 + Adam with amsgrad
+
+# model: customized_cnn + Adam with amsgraddam + LR scheduler v.s. customized_cnn + SGD + LR scheduler
+
+# compare early stop param v.s. non-early stop params

@@ -1,6 +1,5 @@
 import torch
 
-
 class EarlyStop:
     """use to determine early stop
         >>> EarlyStop(path to store model, stop count, different, type  = "loss" or "accuracy")
