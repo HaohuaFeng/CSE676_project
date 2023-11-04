@@ -6,7 +6,7 @@ import torch.nn as nn
 # reference: Customized-CNN
 
 # initialize loss-function and optimizer
-model_name = 'Customized-cnn_ADAM_ELU_lr0001'
+model_name = 'Customized-cnn_ELU_ADAM_lr0001'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
