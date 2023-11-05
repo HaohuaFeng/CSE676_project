@@ -1,19 +1,10 @@
 import torch.nn as nn
 
-# todo: we should compare the optimal version with the previous ones
-# version optimal
-# reference: AlexNet
-
-# initialize loss-function and optimizer
-model_name = 'Alex_256_relu_Adam_lr0001'
+# saving path, will change when read optimizer_name
+model_name = 'Alex_256_relu_'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
-
-# optimizer
-# Adam
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes):

@@ -1,13 +1,10 @@
-import torch
 import torch.nn as nn
 
-model_name = 'VGG16_4096_Adam_lr0001'
+# saving path, will change when read optimizer_name
+model_name = 'VGG16_4096_'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
-
-# optimizer
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes=7):

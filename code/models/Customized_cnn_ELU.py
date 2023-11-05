@@ -1,20 +1,10 @@
-import torch
 import torch.nn as nn
 
-# todo: we should compare the optimal version with the previous ones
-# version optimal
-# reference: Customized-CNN
-
-# initialize loss-function and optimizer
-model_name = 'Customized-cnn_ELU_SGD_lr0001'
+# saving path, will change when read optimizer_name
+model_name = 'Customized-cnn_ELU_'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
-
-# optimizer
-# Adam + amsgrad
-# amsgrad=True -> stablize gradient descentamsgrad=True
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, amsgrad=True)
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes):

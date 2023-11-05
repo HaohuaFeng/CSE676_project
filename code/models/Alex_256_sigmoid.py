@@ -1,19 +1,11 @@
 import torch.nn as nn
 
-# todo: we should compare the optimal version with the previous ones
-# version optimal
-# reference: AlexNet
-
-# initialize loss-function and optimizer
-model_name = 'Alex_256_tanh_SGD_lr0001'
+# saving path, will change when read optimizer_name
+model_name = 'Alex_256_sigmoid_'
 pth_save_path = './model_data/' + model_name + '/model.pth'
 pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
 record_save_path = './model_data/' + model_name
 
-# optimizer
-# SGD + momentum
-optimizer = optim.SGD(model.parameters(), lr=0.0001,
-                      momentum=0.9)  # lr won't change
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes):
@@ -53,19 +45,19 @@ class EmotionCNN(nn.Module):
             nn.Dropout(),
             nn.Linear(256 * 6 * 6, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.Sigmoid(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.Sigmoid(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.Sigmoid(),
             nn.Dropout(),
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
-            nn.Tanh(),
+            nn.Sigmoid(),
             nn.Linear(256, num_classes), )
 
     def forward(self, x):
