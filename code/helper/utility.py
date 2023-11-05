@@ -71,7 +71,7 @@ def model_validation(model, device, data_loader, pth_path, record_save_path):
     print(classification_report(y_true, y_pred))
 
 
-def plot_record(x, y, xlabel, ylabel, title, save_path):
+def plot_record(x, y, xlabel, ylabel, title, save_path, show=True):
     plt.clf()
     plt.plot(x, y)
     # plt.scatter(x, y, s=1)
@@ -87,4 +87,5 @@ def plot_record(x, y, xlabel, ylabel, title, save_path):
     plt.ylabel(ylabel)
     plt.title(title)
     plt.savefig(save_path)
-    plt.show()
+    if show:
+        plt.show()
