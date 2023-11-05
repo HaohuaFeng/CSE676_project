@@ -37,3 +37,15 @@ We utilize the FER-2013 dataset, comprising a training subset and a testing subs
 # model: customized_cnn + Adam with amsgraddam + LR scheduler v.s. customized_cnn + SGD + LR scheduler
 
 # compare early stop param v.s. non-early stop params
+
+# run the following scripts to compare results:
+
+```python
+python3 VGG_exe_all.py  
+```
+```python
+python3 Alexnet_exe_all.py  
+```
+```python
+python3 customized_cnn_exe_all.py  
+```
