@@ -40,12 +40,12 @@ python3 customized_cnn_exe_all.py
 
 ## Round 1:
 ## model: AlexNet_256 + Activation Function on FC (Sigmoid, Tanh, Relu) + Optimizer (Adam, SGD)
-### select the winner
+### select the winner -> Alex_256_relu_Adam
 
 ## model: AlexNet_4096 + Activation Function on FC (Tanh, Relu) + Optimizer (Adam, SGD)
-### select the winner
+### select the winner -> Alex_4096_relu_Adam
 
-### then we compare AlexNet-4096 vs Alec-256, and select the winner. -> winner of Round 1
+### then we compare AlexNet-4096 winner vs Alec-256 winner, and select the final winner, which is the winner of Round 1. -> Alex_4096_relu_Adam
 
 ## Round 2:
 ## model: VGG16_4096 + Optimizer (Adam, Adam_amsgrad)
