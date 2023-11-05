@@ -22,23 +22,9 @@ We utilize the FER-2013 dataset, comprising a training subset and a testing subs
 
 # 6. Contributions and GitHub:
 
-# comparation between models:
-## model: AlexNet + Activation Function on FC + Optimizer
-## 1. AlexNet-256 + sigmoid + Adam (Win) v.s. AlexNet-256 + sigmoid + SGD
-## 2. AlexNet-256 + Tanh + Adam (Win) v.s. AlexNet-256 + Tanh + SGD
-## 3. AlexNet-256 + Relu + Adam v.s. AlexNet-256 + Relu + SGD (?)
-## => AlexNet-256 + sigmoid + Adam v.s. AlexNet-256 + Tanh + Adam v.s. (3.) (?)
-## so we should use Adam + (Tanh or Relu). Then we move to 4096 layer
-## 3. AlexNet-4096 + Relu + Adam (Win) v.s. AlexNet-4096 + Tanh + Adam
-## then we compare AlexNet-4096 vs Alec-256, and select the winner.
+# Comparation between models:
 
-# model: VGG16 + Adam v.s. VGG16 + Adam with amsgrad
-
-# model: customized_cnn + Adam with amsgraddam + LR scheduler v.s. customized_cnn + SGD + LR scheduler
-
-# compare early stop param v.s. non-early stop params
-
-# run the following scripts to compare results:
+## You can run the following scripts to generate results:
 
 ```python
 python3 VGG_exe_all.py  
@@ -49,3 +35,32 @@ python3 Alexnet_exe_all.py
 ```python
 python3 customized_cnn_exe_all.py  
 ```
+
+## You can go to `code/comparison` to see the winner of each round.
+
+## Round 1:
+## model: AlexNet_256 + Activation Function on FC (Sigmoid, Tanh, Relu) + Optimizer (Adam, SGD)
+### select the winner
+
+## model: AlexNet_4096 + Activation Function on FC (Tanh, Relu) + Optimizer (Adam, SGD)
+### select the winner
+
+### then we compare AlexNet-4096 vs Alec-256, and select the winner. -> winner of Round 1
+
+## Round 2:
+## model: VGG16_4096 + Optimizer (Adam, Adam_amsgrad)
+### select the winner -> winner of Round 2
+
+## Round 3:
+## model: Customized_cnn + Optimizer (Adam_amsgrad, SGD) + LR Scheduler
+### select the winner -> winner of Round 3
+
+## Round 4:
+## Round 1 vs Round 2 vs Round 3, and we should also consider "efficiency"
+### select the final winner
+
+## Others:
+### compare early stop param v.s. non-early stop params, empirical loss v.s. general loss
+
+## Advanced:
+### Continue Learning
