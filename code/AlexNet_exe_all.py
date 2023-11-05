@@ -45,7 +45,7 @@ if __name__ == '__main__':
             ])
 
             train_dataset = datasets.ImageFolder(
-                '../dataset/train', transform=data_transforms)
+                './dataset/train', transform=data_transforms)
             # split training set to training set and validation set
             # a random seed to ensure reproducibility of results.
             torch.manual_seed(42)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 train_dataset, [train_size, val_size])
 
             test_dataset = datasets.ImageFolder(
-                '../dataset/test', transform=data_transforms)
+                './dataset/test', transform=data_transforms)
 
 
             train_loader = DataLoader(train_dataset, batch_size=128,
@@ -65,8 +65,6 @@ if __name__ == '__main__':
             test_loader = DataLoader(test_dataset, batch_size=128,
                                     shuffle=False, num_workers=16, pin_memory=False)
 
-            print(len(val_loader), len(train_dataset))
-
             # select device
             device = utility.select_devices(use_cudnn_if_avaliable=True)
 
@@ -74,10 +72,7 @@ if __name__ == '__main__':
             1. Model
             '''
             # saving path
-            m.model_name += m.model_name + optimizer_name
-            m.pth_save_path = './model_data/' + m.model_name + '/model.pth'
-            m.pth_manual_save_path = './model_data/' + m.model_name + '/manual_save_model.pth'
-            m.record_save_path = './model_data/' + m.model_name
+            m.update_file_name(optimizer_name)
 
             # Be used to compare results.
             # average loss / epoch
@@ -96,7 +91,7 @@ if __name__ == '__main__':
             if not os.path.exists(m.record_save_path):
                 os.makedirs(m.record_save_path)
             criterion = nn.CrossEntropyLoss()
-            optimizer = optimizer.create_optimizer(
+            optimizer_ = optimizer.create_optimizer(
                 model.parameters(), optimizer_name)
 
             # training model
@@ -131,9 +126,9 @@ if __name__ == '__main__':
                     # compute loss of output
                     loss = criterion(outputs, labels)
                     # backward propagation
-                    optimizer.zero_grad()
+                    optimizer_.zero_grad()
                     loss.backward()
-                    optimizer.step()
+                    optimizer_.step()
                     # record training status
                     running_loss += loss.item()
                     prediction = outputs.argmax(dim=1)
@@ -177,16 +172,15 @@ if __name__ == '__main__':
 
                     early_stopping.check_status(model, val_accuracy)
 
-                    # display recently 5 average loss of epochs
-                    process.set_description(f"avg loss[-5:] = {['{:.5f}'.format(num) for num in loss_history_per_epoch[-5:]]}\t"
-                                            f"val loss[-5:] = {['{:.5f}'.format(num) for num in val_loss_per_epoch[-5:]]}\t"
-                                            f"accuracy[-5:] = {['{:.3%}'.format(num) for num in accuracy_per_epoch[-5:]]}\t"
-                                            f"val accuracy[-5:] = {['{:.3%}'.format(num) for num in val_accuracy_per_epoch[-5:]]}\t"
-                                            f"best value = {'{:.3%}'.format(early_stopping.best_of_all_value)}\t"
-                                            f"Counter = {early_stopping.counter}/{stop_counter} | {counter}/{stop_counter_window}\t")
+                    process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
+                                            f"val loss= {'{:.5f}'.format(val_loss_per_epoch[-1])} - "
+                                            f"accuracy= {'{:.3%}'.format(accuracy_per_epoch[-1])} - "
+                                            f"val accuracy= {'{:.3%}'.format(val_accuracy_per_epoch[-1])} - "
+                                            f"best= {'{:.3%}'.format(early_stopping.best_of_all_value)} - "
+                                            f"Counter= {early_stopping.counter}/{stop_counter}")
                 else:
-                    process.set_description(f"avg loss[-5:] = {['{:.5f}'.format(num) for num in loss_history_per_epoch[-5:]]}\t"
-                                            f"accuracy[-5:] = {['{:.3%}'.format(num) for num in accuracy_per_epoch[-5:]]}\t")
+                    process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
+                                            f"accuracy= {'{:.3%}'.format(accuracy_per_epoch[-1])}")
 
                 if early_stopping.early_stop:
                     print('\nTrigger Early Stopping\n')
@@ -215,22 +209,22 @@ if __name__ == '__main__':
             data = utility.read_pickle_files(
                 m.record_save_path + '/loss_history.pkl')
             utility.plot_record(x=range(1, len(data)+1), y=data, xlabel="epoch", ylabel="loss", title="Training Loss",
-                                save_path=m.record_save_path+"/loss_history.png")
+                                save_path=m.record_save_path+"/loss_history.png", show=False)
 
             data = utility.read_pickle_files(
                 m.record_save_path + '/accuracy_history.pkl')
             utility.plot_record(x=range(1, len(data)+1), y=data, xlabel="epoch", ylabel="accuracy", title="Training Accuracy",
-                                save_path=m.record_save_path+"/accuracy_history.png")
+                                save_path=m.record_save_path+"/accuracy_history.png", show=False)
 
             data = utility.read_pickle_files(
                 m.record_save_path + '/val_loss_history.pkl')
             utility.plot_record(x=range(run_after+1, run_after+len(data)+1), y=data, xlabel="epoch", ylabel="validation loss",
-                                title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png")
+                                title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png", show=False)
 
             data = utility.read_pickle_files(
                 m.record_save_path + '/val_accuracy_history.pkl')
             utility.plot_record(x=range(run_after+1, run_after+len(data)+1), y=data, xlabel="epoch", ylabel="validation accuracy",
-                                title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png")
+                                title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png", show=False)
             # evaluate model
             model = m.EmotionCNN(num_classes=7)
             utility.model_validation(model, device, test_loader,

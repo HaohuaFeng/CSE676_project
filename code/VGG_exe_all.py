@@ -39,7 +39,7 @@ if __name__ == '__main__':
         ])
 
         train_dataset = datasets.ImageFolder(
-            '../dataset/train', transform=data_transforms)
+            './dataset/train', transform=data_transforms)
         # split training set to training set and validation set
         # a random seed to ensure reproducibility of results.
         torch.manual_seed(42)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
             train_dataset, [train_size, val_size])
 
         test_dataset = datasets.ImageFolder(
-            '../dataset/test', transform=data_transforms)
+            './dataset/test', transform=data_transforms)
 
 
         train_loader = DataLoader(train_dataset, batch_size=64,
@@ -58,8 +58,6 @@ if __name__ == '__main__':
                                 shuffle=False, num_workers=16, pin_memory=True)
         test_loader = DataLoader(test_dataset, batch_size=32,
                                 shuffle=False, num_workers=16, pin_memory=False)
-
-        print(len(val_loader), len(train_dataset))
 
         # select device
         device = utility.select_devices(use_cudnn_if_avaliable=True)
@@ -79,22 +77,17 @@ if __name__ == '__main__':
         val_accuracy_per_epoch = []
 
         # todo: select optimizer
-        optimizer_name = "Adam_amsgrad"
+        # optimizer_name = "Adam_amsgrad"
         # optimizer_name = "Adam"
 
-        # saving path
-        m.model_name += m.model_name + optimizer_name
-        m.pth_save_path = './model_data/' + m.model_name + '/model.pth'
-        m.pth_manual_save_path = './model_data/' + \
-            m.model_name + '/manual_save_model.pth'
-        m.record_save_path = './model_data/' + m.model_name
-
+        m.update_file_name(optimizer_name)
+        
         # initialize model, loss-function and optimizer
         model = m.EmotionCNN(num_classes=7)  # FER-2013 has 7 emotion class
-        if not os.path.exists(m.record_save_path):
-            os.makedirs(m.record_save_path)
+        if not os.path.exists(m.record_save_path + optimizer_name):
+            os.makedirs(m.record_save_path + optimizer_name)
         criterion = nn.CrossEntropyLoss()
-        optimizer = optimizer.create_optimizer(model.parameters(), optimizer_name)
+        optimizer_ = optimizer.create_optimizer(model.parameters(), optimizer_name)
 
         # training model
         num_epochs = 2000
@@ -128,9 +121,9 @@ if __name__ == '__main__':
                 # compute loss of output
                 loss = criterion(outputs, labels)
                 # backward propagation
-                optimizer.zero_grad()
+                optimizer_.zero_grad()
                 loss.backward()
-                optimizer.step()
+                optimizer_.step()
                 # record training status
                 running_loss += loss.item()
                 probability = torch.nn.functional.softmax(outputs, dim=1)
@@ -176,15 +169,15 @@ if __name__ == '__main__':
                 early_stopping.check_status(model, val_accuracy)
 
                 # display recently 5 average loss of epochs
-                process.set_description(f"avg loss[-5:] = {['{:.5f}'.format(num) for num in loss_history_per_epoch[-5:]]}\t"
-                                        f"val loss[-5:] = {['{:.5f}'.format(num) for num in val_loss_per_epoch[-5:]]}\t"
-                                        f"accuracy[-5:] = {['{:.3%}'.format(num) for num in accuracy_per_epoch[-5:]]}\t"
-                                        f"val accuracy[-5:] = {['{:.3%}'.format(num) for num in val_accuracy_per_epoch[-5:]]}\t"
-                                        f"best value = {'{:.3%}'.format(early_stopping.best_of_all_value)}\t"
-                                        f"Counter = {early_stopping.counter}/{stop_counter} | {counter}/{stop_counter_window}\t")
+                process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
+                                            f"val loss= {'{:.5f}'.format(val_loss_per_epoch[-1])} - "
+                                            f"accuracy= {'{:.3%}'.format(accuracy_per_epoch[-1])} - "
+                                            f"val accuracy= {'{:.3%}'.format(val_accuracy_per_epoch[-1])} - "
+                                            f"best= {'{:.3%}'.format(early_stopping.best_of_all_value)} - "
+                                            f"Counter= {early_stopping.counter}/{stop_counter}")
             else:
-                process.set_description(f"avg loss[-5:] = {['{:.5f}'.format(num) for num in loss_history_per_epoch[-5:]]}\t"
-                                        f"accuracy[-5:] = {['{:.5f}'.format(num) for num in accuracy_per_epoch[-5:]]}\t")
+                process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
+                                            f"accuracy= {'{:.3%}'.format(accuracy_per_epoch[-1])}")
 
             if early_stopping.early_stop:
                 print('\nTrigger Early Stopping\n')

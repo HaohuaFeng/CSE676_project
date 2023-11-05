@@ -2,9 +2,16 @@ import torch.nn as nn
 
 # saving path, will change when read optimizer_name
 model_name = 'VGG16_4096_'
-pth_save_path = './model_data/' + model_name + '/model.pth'
-pth_manual_save_path = './model_data/' + model_name + '/manual_save_model.pth'
-record_save_path = './model_data/' + model_name
+pth_save_path = ''
+pth_manual_save_path = ''
+record_save_path = ''
+
+def update_file_name(optimizer_name):
+    global pth_save_path, pth_manual_save_path, record_save_path
+    new_name = model_name + optimizer_name
+    pth_save_path = './model_data/' + new_name + '/model.pth'
+    pth_manual_save_path = './model_data/' + new_name + '/manual_save_model.pth'
+    record_save_path = './model_data/' + new_name
 
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes=7):
