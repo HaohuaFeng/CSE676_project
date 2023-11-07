@@ -158,6 +158,16 @@ def grayscale_transform_verticalflip(channel, size, p=0.5):
     return transformer
 
 
+def grayscale_transform_horizontalflip(channel, size, p=0.5):
+    transformer = transforms.Compose([
+        transforms.Grayscale(num_output_channels=channel),
+        transforms.RandomHorizontalFlip(p),
+        transforms.Resize(size), 
+        transforms.ToTensor(),
+    ])
+    return transformer
+
+
 def grayscale_transform_crop(channel, size, scale=(0.08, 1)):
     transformer = transforms.Compose([
         transforms.Grayscale(num_output_channels=channel),
