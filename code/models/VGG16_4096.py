@@ -14,44 +14,53 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class EmotionCNN(nn.Module):
-    def __init__(self, num_classes=7):
+    def __init__(self, num_classes=7, input_channels=1):
         super(EmotionCNN, self).__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.Conv2d(input_channels, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
             nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2),
-
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(128),
+            nn.ReLU(True),
             nn.Conv2d(128, 128, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(128),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2),
-
             nn.Conv2d(128, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(256),
+            nn.ReLU(True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(256),
+            nn.ReLU(True),
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(256),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2),
-
             nn.Conv2d(256, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2),
-
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
@@ -62,7 +71,7 @@ class EmotionCNN(nn.Module):
             nn.Linear(4096, 4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(4096, num_classes)
+            nn.Linear(4096, num_classes),
         )
 
     def forward(self, x):

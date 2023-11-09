@@ -84,8 +84,8 @@ if __name__ == '__main__':
         
         # initialize model, loss-function and optimizer
         model = m.EmotionCNN(num_classes=7)  # FER-2013 has 7 emotion class
-        if not os.path.exists(m.record_save_path + optimizer_name):
-            os.makedirs(m.record_save_path + optimizer_name)
+        if not os.path.exists(m.record_save_path):
+            os.makedirs(m.record_save_path)
         criterion = nn.CrossEntropyLoss()
         optimizer_ = optimizer.create_optimizer(model.parameters(), optimizer_name)
 
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         num_epochs = 2000
 
         # early stopping variables
-        stop_counter = 5  # number of count to trigger early stop
+        stop_counter = 10  # number of count to trigger early stop
         stop_counter_window = stop_counter + 5  # a range to check stop_counter
         different = 0.01  # different between the best val loss and the most recent one
         stop_counter_interval = 30  # check for early stop for every stop_counter_interval
@@ -205,24 +205,24 @@ if __name__ == '__main__':
         # draw graphs
         data = utility.read_pickle_files(m.record_save_path + '/loss_history.pkl')
         utility.plot_record(x=range(1, len(data)+1), y=data, xlabel="epoch", ylabel="loss", title="Training Loss",
-                            save_path=m.record_save_path+"/loss_history.png")
+                            save_path=m.record_save_path+"/loss_history.png", show=False)
 
         data = utility.read_pickle_files(m.record_save_path + '/accuracy_history.pkl')
         utility.plot_record(x=range(1, len(data)+1), y=data, xlabel="epoch", ylabel="accuracy", title="Training Accuracy",
-                            save_path=m.record_save_path+"/accuracy_history.png")
+                            save_path=m.record_save_path+"/accuracy_history.png", show=False)
 
         data = utility.read_pickle_files(m.record_save_path + '/val_loss_history.pkl')
         utility.plot_record(x=range(run_after+1, run_after+len(data)+1), y=data, xlabel="epoch", ylabel="validation loss",
-                            title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png")
+                            title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png", show=False)
 
         data = utility.read_pickle_files(
             m.record_save_path + '/val_accuracy_history.pkl')
         utility.plot_record(x=range(run_after+1, run_after+len(data)+1), y=data, xlabel="epoch", ylabel="validation accuracy",
-                            title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png")
+                            title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png", show=False)
 
         # evaluate model
         model = m.EmotionCNN(num_classes=7)
         utility.model_validation(model, device, test_loader,
-                                m.pth_save_path, m.record_save_path)
+                                m.pth_save_path, m.record_save_path, file_name='1')
         utility.model_validation(model, device, test_loader,
-                                m.pth_manual_save_path, m.record_save_path)
+                                m.pth_manual_save_path, m.record_save_path, file_name='2')

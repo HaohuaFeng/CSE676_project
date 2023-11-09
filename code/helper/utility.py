@@ -3,6 +3,7 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import torch.nn as nn
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from sklearn.metrics import confusion_matrix, classification_report
 import scikitplot as skplt
@@ -18,7 +19,9 @@ def select_devices(use_cudnn_if_avaliable):
         if use_cudnn_if_avaliable:
             torch.backends.cudnn.enabled = True
             torch.backends.cudnn.benchmark = True
-        print("using CUDA + cudnn")
+            print("using CUDA + cudnn")
+        else:
+            print("using CUDA")
         return torch.device("cuda:0")
     elif torch.backends.mps.is_available():
         print("using mac mps")
@@ -43,7 +46,7 @@ def read_pickle_files(path):
     return data
 
 
-def model_validation(model, device, data_loader, pth_path, record_save_path):
+def model_validation(model, device, data_loader, pth_path, record_save_path, file_name, output_softmax=False):
     model.load_state_dict(torch.load(pth_path))
     model.to(device)
     model.eval()
@@ -56,7 +59,9 @@ def model_validation(model, device, data_loader, pth_path, record_save_path):
         for inputs, labels in data_loader:
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
-            _, predicted = torch.max(outputs.data, 1)  # predicted is the emotion index
+            if output_softmax:
+                outputs = nn.functional.softmax(outputs, dim=1)
+            predicted = torch.argmax(outputs.data, 1)  # predicted is the emotion index
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
@@ -69,7 +74,7 @@ def model_validation(model, device, data_loader, pth_path, record_save_path):
     conf_matrix = confusion_matrix(y_true, y_pred)
     plt.figure(figsize=(7, 7))
     skplt.metrics.plot_confusion_matrix(y_true, y_pred, figsize=(7, 7), normalize=True)
-    plt.savefig(record_save_path + "/confusion_matrix.png")
+    plt.savefig(record_save_path + "/confusion_matrix" + file_name + ".png")
     print(classification_report(y_true, y_pred))
 
 
@@ -172,6 +177,24 @@ def grayscale_transform_crop(channel, size, scale=(0.08, 1)):
     transformer = transforms.Compose([
         transforms.Grayscale(num_output_channels=channel),
         transforms.RandomResizedCrop(size, scale=scale),
+        transforms.Resize(size), 
+        transforms.ToTensor(),
+    ])
+    return transformer
+
+def grayscale_transform_trainslate(channel, size, value=(0.3, 0)):
+    transformer = transforms.Compose([
+        transforms.Grayscale(num_output_channels=channel),
+        transforms.RandomAffine(0, translate=value),
+        transforms.Resize(size), 
+        transforms.ToTensor(),
+    ])
+    return transformer
+
+def grayscale_transform_shear(channel, size, value=(-45, 45)):
+    transformer = transforms.Compose([
+        transforms.Grayscale(num_output_channels=channel),
+        transforms.RandomAffine(0, shear=value),
         transforms.Resize(size), 
         transforms.ToTensor(),
     ])
