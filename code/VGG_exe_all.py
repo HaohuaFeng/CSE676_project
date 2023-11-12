@@ -43,7 +43,7 @@ if __name__ == '__main__':
         # split training set to training set and validation set
         # a random seed to ensure reproducibility of results.
         torch.manual_seed(42)
-        train_size = int(0.9 * len(train_dataset))
+        train_size = int(0.8 * len(train_dataset))
         val_size = len(train_dataset) - train_size
         train_dataset, val_dataset = random_split(
             train_dataset, [train_size, val_size])
