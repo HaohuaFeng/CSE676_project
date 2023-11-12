@@ -49,7 +49,7 @@ python3 customized_cnn_exe_all.py
 
 ## Round 2:
 ## model: VGG16_4096 + Optimizer (Adam, Adam_amsgrad)
-### select the winner -> winner of Round 2
+### select the winner -> VGG16_4096_Adam_amsgrad, because it is more stable. -> winner of Round 2
 
 ## Round 3:
 ## model: Customized_cnn + Optimizer (Adam_amsgrad, SGD) + LR Scheduler
