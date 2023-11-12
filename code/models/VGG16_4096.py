@@ -5,20 +5,22 @@ model_name = 'VGG16_4096_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
+record_save_path = ''
 
 def update_file_name(optimizer_name):
-    global pth_save_path, pth_manual_save_path, record_save_path
+    global pth_save_path, pth_manual_save_path, record_save_path, pth_save_path_loss
     new_name = model_name + optimizer_name
     pth_save_path = './model_data/' + new_name + '/model.pth'
     pth_manual_save_path = './model_data/' + new_name + '/manual_save_model.pth'
+    pth_save_path_loss = './model_data/' + new_name + '/best_loss_model.pth'
     record_save_path = './model_data/' + new_name
 
 class EmotionCNN(nn.Module):
-    def __init__(self, num_classes=7, input_channels=1):
+    def __init__(self, num_classes=7, input_channel=1):
         super(EmotionCNN, self).__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(input_channels, 64, kernel_size=3, padding=1),
+            nn.Conv2d(input_channel, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.Conv2d(64, 64, kernel_size=3, padding=1),

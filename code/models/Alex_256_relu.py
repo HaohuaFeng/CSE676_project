@@ -14,10 +14,10 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class EmotionCNN(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, input_channel = 1):
         super(EmotionCNN, self).__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=96, kernel_size=11, stride=4, padding=2),
+            nn.Conv2d(in_channels=input_channel, out_channels=96, kernel_size=11, stride=4, padding=2),
             # out_channels is decided by # of filters
             # batch_size doesn't show here and is different from in_channels.
             nn.BatchNorm2d(96),

@@ -6,11 +6,13 @@ model_name = 'Alex_4096_relu_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
+pth_save_path_loss = ''
 
 def update_file_name(optimizer_name):
-    global pth_save_path, pth_manual_save_path, record_save_path
+    global pth_save_path, pth_manual_save_path, record_save_path, pth_save_path_loss
     new_name = model_name + optimizer_name
     pth_save_path = './model_data/' + new_name + '/model.pth'
+    pth_save_path_loss = './model_data/' + new_name + '/best_loss_model.pth'
     pth_manual_save_path = './model_data/' + new_name + '/manual_save_model.pth'
     record_save_path = './model_data/' + new_name
 
@@ -51,22 +53,18 @@ class EmotionCNN(nn.Module):
 
         # flatten from channel, ex: [batch_size, channels(1), height, width] -> [batch_size, channels * height * width]
         self.classifier = nn.Sequential(
-            nn.Dropout(),
-            nn.Linear(256 * 6 * 6, 4096),
-            nn.BatchNorm1d(4096),
+            nn.Dropout(p=0.5),
+            nn.Linear(256 * 6 * 6, 4096, bias=True),
             nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
+            nn.Dropout(p=0.5),
+            nn.Linear(4096, 4096, bias=True),
             nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.BatchNorm1d(4096),
-            nn.ReLU(inplace=True),
+            # nn.Dropout(p=0.5),
+            # nn.Linear(4096, 4096, bias=True),
+            # nn.ReLU(inplace=True),
+            # nn.Dropout(p=0.5),
+            # nn.Linear(4096, 4096, bias=True),
+            # nn.ReLU(inplace=True),
             nn.Linear(4096, num_classes), )
 
     def forward(self, x):

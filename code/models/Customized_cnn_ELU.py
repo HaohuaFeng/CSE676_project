@@ -14,10 +14,10 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class EmotionCNN(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, input_channel = 1):
         super(EmotionCNN, self).__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=64,
+            nn.Conv2d(in_channels=input_channel, out_channels=64,
                       kernel_size=3, padding=1),
             # in_channels=1 -> gray channel
             # out_channels is decided by # of filters
