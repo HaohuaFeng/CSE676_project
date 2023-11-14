@@ -103,18 +103,19 @@ if __name__ == '__main__':
         # early stopping variables
         stop_counter = 18  # number of count to trigger early stop (patience)
         stop_counter_window = stop_counter + 5  # a range to check stop_counter
-        different = 0.00008  # different between the best val loss and the most recent one
+        different = 0.0001  # different between the best val loss and the most recent one
+        different_loss = 0.0001
         stop_counter_interval = 10  # check for early stop for every stop_counter_interval
         counter = 0  # number of count for every trail of early stop
         is_always = True  # always check for early stop, set to true will ignore other setting except stop_counter
         is_exe = False  # is early stop running
         run_after = 0
         early_stopping = EarlyStop(
-            m.pth_save_path, stop_counter, different, type="accuracy")
+            m.pth_save_path, m.pth_save_path_loss, stop_counter, different, different_loss,type="accuracy")
 
         # ReduceLRonPlateau (which can improve lr every epoch)
         lr_scheduler = ReduceLROnPlateau(
-            optimizer,
+            optimizer_,
             mode='max',                 # 'max' for monitoring validation accuracy
             factor=0.4,                 # factor by which the learning rate will be reduced
             patience=6,                 # number of epochs with no improvement to trigger LR reduction
@@ -198,10 +199,10 @@ if __name__ == '__main__':
                 val_accuracy_per_epoch.append(val_accuracy)
 
                 # check the early stopping status
-                early_stopping.check_status(model, val_accuracy)
+                early_stopping.check_status(model, val_accuracy, val_loss)
 
                 # at the end of each epoch, update the learning rate
-                lr_scheduler.step(val_accuracy)
+                # lr_scheduler.step(val_accuracy)
 
                 # display recently 5 average loss of epochs
                 process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
@@ -240,24 +241,24 @@ if __name__ == '__main__':
         # draw graphs
         data = utility.read_pickle_files(m.record_save_path + '/loss_history.pkl')
         utility.plot_record(x=range(len(data)), y=data, xlabel="epoch", ylabel="loss", title="Training Loss",
-                            save_path=m.record_save_path+"/loss_history.png")
+                            save_path=m.record_save_path+"/loss_history.png", show=False)
 
         data = utility.read_pickle_files(m.record_save_path + '/accuracy_history.pkl')
         utility.plot_record(x=range(len(data)), y=data, xlabel="epoch", ylabel="accuracy", title="Training Accuracy",
-                            save_path=m.record_save_path+"/accuracy_history.png")
+                            save_path=m.record_save_path+"/accuracy_history.png", show=False)
 
         data = utility.read_pickle_files(m.record_save_path + '/val_loss_history.pkl')
         utility.plot_record(x=range(len(data)), y=data, xlabel="epoch", ylabel="validation loss",
-                            title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png")
+                            title="Validation Loss", save_path=m.record_save_path+"/val_loss_history.png", show=False)
 
         data = utility.read_pickle_files(
             m.record_save_path + '/val_accuracy_history.pkl')
         utility.plot_record(x=range(len(data)), y=data, xlabel="epoch", ylabel="validation accuracy",
-                            title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png")
+                            title="Validation Accuracy", save_path=m.record_save_path+"/val_accuracy_history.png", show=False)
 
         # evaluate model
         model = m.EmotionCNN(num_classes=7)
         utility.model_validation(model, device, test_loader,
-                                m.pth_save_path, m.record_save_path)
+                                m.pth_save_path, m.record_save_path, show=False, file_name='0')
         utility.model_validation(model, device, test_loader,
-                                m.pth_manual_save_path, m.record_save_path)
+                                m.pth_manual_save_path, m.record_save_path, show=False, file_name='1')

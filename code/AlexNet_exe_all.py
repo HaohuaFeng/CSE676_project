@@ -41,29 +41,16 @@ if __name__ == '__main__':
                 # resize to 227 * 227 because we use AlexNet
                 transforms.Resize((227, 227)),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485], std=[0.229])  # normalize
             ])
 
-            train_dataset = datasets.ImageFolder(
-                './dataset/train', transform=data_transforms)
-            # split training set to training set and validation set
-            # a random seed to ensure reproducibility of results.
-            torch.manual_seed(42)
-            train_size = int(0.9 * len(train_dataset))
-            val_size = len(train_dataset) - train_size
-            train_dataset, val_dataset = random_split(
-                train_dataset, [train_size, val_size])
-
-            test_dataset = datasets.ImageFolder(
-                './dataset/test', transform=data_transforms)
+            train_dataset = datasets.ImageFolder('./dataset/splited_data/train_data', transform=data_transforms)
+            val_dataset = datasets.ImageFolder('./dataset/splited_data/validation_data', transform=data_transforms)
+            test_dataset = datasets.ImageFolder('./dataset/test', transform=data_transforms)
 
 
-            train_loader = DataLoader(train_dataset, batch_size=128,
-                                    shuffle=True, num_workers=16, pin_memory=True)
-            val_loader = DataLoader(val_dataset, batch_size=128,
-                                    shuffle=False, num_workers=16, pin_memory=True)
-            test_loader = DataLoader(test_dataset, batch_size=128,
-                                    shuffle=False, num_workers=16, pin_memory=False)
+            train_loader = DataLoader(train_dataset, batch_size=128,shuffle=True, num_workers=16, pin_memory=True)
+            val_loader = DataLoader(val_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=True)
+            test_loader = DataLoader(test_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=False)
 
             # select device
             device = utility.select_devices(use_cudnn_if_avaliable=True)
@@ -91,8 +78,7 @@ if __name__ == '__main__':
             if not os.path.exists(m.record_save_path):
                 os.makedirs(m.record_save_path)
             criterion = nn.CrossEntropyLoss()
-            optimizer_ = optimizer.create_optimizer(
-                model.parameters(), optimizer_name)
+            optimizer_ = optimizer.create_optimizer(model.parameters(), optimizer_name)
 
             # training model
             num_epochs = 2000
@@ -100,14 +86,15 @@ if __name__ == '__main__':
             # early stopping variables
             stop_counter = 10  # number of count to trigger early stop
             stop_counter_window = 15  # a range to check stop_counter
-            different = 0.0001  # different between the best val loss and the most recent one
+            different = 0.0001
+            different_loss = 0.0001  # different between the best val loss and the most recent one
             stop_counter_interval = 30  # check for early stop for every stop_counter_interval
             counter = 0  # number of count for every trail of early stop
             is_always = True  # always check for early stop, set to true will ignore other setting except stop_counter
             is_exe = False  # is early stop running
             run_after = 0
-            early_stopping = EarlyStop(
-                m.pth_save_path, stop_counter, different, type="accuracy")
+            early_stopping = EarlyStop(m.pth_save_path, m.pth_save_path_loss ,
+                                       stop_counter, different, different_loss, type="accuracy")
             model.to(device)
 
             # progress bar
@@ -170,7 +157,7 @@ if __name__ == '__main__':
                     val_loss_per_epoch.append(val_loss)
                     val_accuracy_per_epoch.append(val_accuracy)
 
-                    early_stopping.check_status(model, val_accuracy)
+                    early_stopping.check_status(model, val_accuracy, val_loss)
 
                     process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
                                             f"val loss= {'{:.5f}'.format(val_loss_per_epoch[-1])} - "
@@ -228,6 +215,6 @@ if __name__ == '__main__':
             # evaluate model
             model = m.EmotionCNN(num_classes=7)
             utility.model_validation(model, device, test_loader,
-                                    m.pth_save_path, m.record_save_path)
+                                    m.pth_save_path, m.record_save_path, file_name='0', show=False)
             utility.model_validation(model, device, test_loader,
-                                    m.pth_manual_save_path, m.record_save_path)
+                                    m.pth_manual_save_path, m.record_save_path, file_name='1', show=False)

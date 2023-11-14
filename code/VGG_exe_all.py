@@ -96,13 +96,14 @@ if __name__ == '__main__':
         stop_counter = 10  # number of count to trigger early stop
         stop_counter_window = stop_counter + 5  # a range to check stop_counter
         different = 0.01  # different between the best val loss and the most recent one
+        different_loss = 0.01
         stop_counter_interval = 30  # check for early stop for every stop_counter_interval
         counter = 0  # number of count for every trail of early stop
         is_always = True  # always check for early stop, set to true will ignore other setting except stop_counter
         is_exe = False  # is early stop running
         run_after = 0
         early_stopping = EarlyStop(
-            m.pth_save_path, stop_counter, different, type="accuracy")
+            m.pth_save_path, m.pth_save_path_loss, stop_counter, different, different_loss, type="accuracy")
 
         model.to(device)
 
@@ -166,7 +167,7 @@ if __name__ == '__main__':
                 val_loss_per_epoch.append(val_loss)
                 val_accuracy_per_epoch.append(val_accuracy)
 
-                early_stopping.check_status(model, val_accuracy)
+                early_stopping.check_status(model, val_accuracy, val_loss)
 
                 # display recently 5 average loss of epochs
                 process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
@@ -223,6 +224,6 @@ if __name__ == '__main__':
         # evaluate model
         model = m.EmotionCNN(num_classes=7)
         utility.model_validation(model, device, test_loader,
-                                m.pth_save_path, m.record_save_path, file_name='1')
+                                m.pth_save_path, m.record_save_path, file_name='0', show=False)
         utility.model_validation(model, device, test_loader,
-                                m.pth_manual_save_path, m.record_save_path, file_name='2')
+                                m.pth_manual_save_path, m.record_save_path, file_name='1', show=False)

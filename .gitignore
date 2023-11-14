@@ -1,0 +1,7 @@
+*.pth
+augmentation_dataset/
+dataset/
+dataset2_MMAFEDB/
+.vscode
+*.pyc
+__pycache__/

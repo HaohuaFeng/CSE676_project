@@ -38,9 +38,9 @@ class EarlyStop:
             if  loss_value > self.best_value_loss - self.loss_different:
                 if self.type == "loss":
                     self.counter += 1
-                if self.counter >= self.stop_count:
-                    self.early_stop = True
-                    self.counter = 0
+                    if self.counter >= self.stop_count:
+                        self.early_stop = True
+                        self.counter = 0
             else:
                 self.best_value_loss = loss_value
                 self.save_loss(model, loss_value)
@@ -50,9 +50,9 @@ class EarlyStop:
             if  value < self.best_value + self.different:
                 if self.type == "accuracy":
                     self.counter += 1
-                if self.counter >= self.stop_count:
-                    self.early_stop = True
-                    self.counter = 0
+                    if self.counter >= self.stop_count:
+                        self.early_stop = True
+                        self.counter = 0
             else:
                 self.best_value = value
                 self.save(model, value)
