@@ -44,22 +44,28 @@ if __name__ == '__main__':
             './dataset/train', transform=data_transforms)
         # split training set to training set and validation set
         # a random seed to ensure reproducibility of results.
-        torch.manual_seed(42)
-        train_size = int(0.9 * len(train_dataset))
-        val_size = len(train_dataset) - train_size
-        train_dataset, val_dataset = random_split(
-            train_dataset, [train_size, val_size])
+        # torch.manual_seed(42)
+        # train_size = int(0.9 * len(train_dataset))
+        # val_size = len(train_dataset) - train_size
+        # train_dataset, val_dataset = random_split(
+        #     train_dataset, [train_size, val_size])
 
-        test_dataset = datasets.ImageFolder(
-            './dataset/test', transform=data_transforms)
+        # test_dataset = datasets.ImageFolder(
+        #     './dataset/test', transform=data_transforms)
 
 
-        train_loader = DataLoader(train_dataset, batch_size=64,
-                                shuffle=True, num_workers=16, pin_memory=True)
-        val_loader = DataLoader(val_dataset, batch_size=64,
-                                shuffle=False, num_workers=16, pin_memory=True)
-        test_loader = DataLoader(test_dataset, batch_size=32,
-                                shuffle=False, num_workers=16, pin_memory=False)
+        # train_loader = DataLoader(train_dataset, batch_size=64,
+        #                         shuffle=True, num_workers=16, pin_memory=True)
+        # val_loader = DataLoader(val_dataset, batch_size=64,
+        #                         shuffle=False, num_workers=16, pin_memory=True)
+        # test_loader = DataLoader(test_dataset, batch_size=32,
+        #                         shuffle=False, num_workers=16, pin_memory=False)
+        train_dataset = datasets.ImageFolder('./dataset/splited_data/train_data', transform=data_transforms)
+        val_dataset = datasets.ImageFolder('./dataset/splited_data/validation_data', transform=data_transforms)
+        test_dataset = datasets.ImageFolder('./dataset/test', transform=data_transforms)
+        train_loader = DataLoader(train_dataset, batch_size=128,shuffle=True, num_workers=16, pin_memory=True)
+        val_loader = DataLoader(val_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=True)
+        test_loader = DataLoader(test_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=False)
 
         # select device
         device = utility.select_devices(use_cudnn_if_avaliable=True)
