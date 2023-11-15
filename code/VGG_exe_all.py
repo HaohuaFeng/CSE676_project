@@ -35,11 +35,10 @@ if __name__ == '__main__':
             transforms.Grayscale(num_output_channels=1),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.5], std=[0.5])  # normalize
         ])
 
-        train_dataset = datasets.ImageFolder(
-            './dataset/train', transform=data_transforms)
+        # train_dataset = datasets.ImageFolder(
+        #     './dataset/train', transform=data_transforms)
         # split training set to training set and validation set
         # a random seed to ensure reproducibility of results.
         # torch.manual_seed(42)
@@ -59,12 +58,12 @@ if __name__ == '__main__':
         # test_loader = DataLoader(test_dataset, batch_size=32,
         #                         shuffle=False, num_workers=16, pin_memory=False)
         
-        train_dataset = datasets.ImageFolder('./dataset/splited_data/train_data', transform=data_transforms)
-        val_dataset = datasets.ImageFolder('./dataset/splited_data/validation_data', transform=data_transforms)
-        test_dataset = datasets.ImageFolder('./dataset/test', transform=data_transforms)
-        train_loader = DataLoader(train_dataset, batch_size=128,shuffle=True, num_workers=16, pin_memory=True)
-        val_loader = DataLoader(val_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=True)
-        test_loader = DataLoader(test_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=False)
+        train_dataset = datasets.ImageFolder('../dataset/splited_data/train_data', transform=data_transforms)
+        val_dataset = datasets.ImageFolder('../dataset/splited_data/validation_data', transform=data_transforms)
+        test_dataset = datasets.ImageFolder('../dataset/test', transform=data_transforms)
+        train_loader = DataLoader(train_dataset, batch_size=32,shuffle=True, num_workers=16, pin_memory=True)
+        val_loader = DataLoader(val_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=True)
+        test_loader = DataLoader(test_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=False)
 
         # select device
         device = utility.select_devices(use_cudnn_if_avaliable=True)
@@ -88,6 +87,7 @@ if __name__ == '__main__':
         # optimizer_name = "Adam"
 
         m.update_file_name(optimizer_name)
+        print('='*20 + '\n' + m.model_name + optimizer_name)
         
         # initialize model, loss-function and optimizer
         model = m.EmotionCNN(num_classes=7)  # FER-2013 has 7 emotion class
@@ -102,8 +102,8 @@ if __name__ == '__main__':
         # early stopping variables
         stop_counter = 10  # number of count to trigger early stop
         stop_counter_window = stop_counter + 5  # a range to check stop_counter
-        different = 0.01  # different between the best val loss and the most recent one
-        different_loss = 0.01
+        different = 0.0001  # different between the best val loss and the most recent one
+        different_loss = 0.0001
         stop_counter_interval = 30  # check for early stop for every stop_counter_interval
         counter = 0  # number of count for every trail of early stop
         is_always = True  # always check for early stop, set to true will ignore other setting except stop_counter

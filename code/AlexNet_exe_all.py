@@ -27,7 +27,7 @@ if __name__ == '__main__':
     model_configs = [Alex_256_relu, Alex_256_sigmoid, Alex_256_tanh, Alex_4096_relu, Alex_4096_tanh]
 
     # optimizer list
-    optimizer_configs = ['Adam', 'SGD']
+    optimizer_configs = ['Adam', 'Adam_amsgrad', 'SGD']
 
     for m in model_configs:
         for optimizer_name in optimizer_configs:
@@ -43,14 +43,14 @@ if __name__ == '__main__':
                 transforms.ToTensor(),
             ])
 
-            train_dataset = datasets.ImageFolder('./dataset/splited_data/train_data', transform=data_transforms)
-            val_dataset = datasets.ImageFolder('./dataset/splited_data/validation_data', transform=data_transforms)
-            test_dataset = datasets.ImageFolder('./dataset/test', transform=data_transforms)
+            train_dataset = datasets.ImageFolder('../dataset/splited_data/train_data', transform=data_transforms)
+            val_dataset = datasets.ImageFolder('../dataset/splited_data/validation_data', transform=data_transforms)
+            test_dataset = datasets.ImageFolder('../dataset/test', transform=data_transforms)
 
 
-            train_loader = DataLoader(train_dataset, batch_size=128,shuffle=True, num_workers=16, pin_memory=True)
-            val_loader = DataLoader(val_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=True)
-            test_loader = DataLoader(test_dataset, batch_size=128,shuffle=False, num_workers=16, pin_memory=False)
+            train_loader = DataLoader(train_dataset, batch_size=32,shuffle=True, num_workers=16, pin_memory=True)
+            val_loader = DataLoader(val_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=True)
+            test_loader = DataLoader(test_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=False)
 
             # select device
             device = utility.select_devices(use_cudnn_if_avaliable=True)
@@ -60,6 +60,7 @@ if __name__ == '__main__':
             '''
             # saving path
             m.update_file_name(optimizer_name)
+            print('='*20 + '\n' + m.model_name + optimizer_name)
 
             # Be used to compare results.
             # average loss / epoch
