@@ -48,9 +48,9 @@ if __name__ == '__main__':
             test_dataset = datasets.ImageFolder('../dataset/test', transform=data_transforms)
 
 
-            train_loader = DataLoader(train_dataset, batch_size=32,shuffle=True, num_workers=16, pin_memory=True)
-            val_loader = DataLoader(val_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=True)
-            test_loader = DataLoader(test_dataset, batch_size=32,shuffle=False, num_workers=16, pin_memory=False)
+            train_loader = DataLoader(train_dataset, batch_size=32,shuffle=True, num_workers=8, pin_memory=True)
+            val_loader = DataLoader(val_dataset, batch_size=32,shuffle=False, num_workers=8, pin_memory=True)
+            test_loader = DataLoader(test_dataset, batch_size=32,shuffle=False, num_workers=8, pin_memory=False)
 
             # select device
             device = utility.select_devices(use_cudnn_if_avaliable=True)
