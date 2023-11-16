@@ -45,7 +45,7 @@ python3 customized_cnn_exe_all.py
 ## model: AlexNet_4096 + Activation Function on FC (Tanh, Relu) + Optimizer (Adam, SGD)
 ### select the winner -> Alex_4096_relu_Adam
 
-### then we compare AlexNet-4096 winner vs Alec-256 winner, and select the final winner, which is the winner of Round 1. -> `Alex_4096_relu_Adam`.
+### then we compare AlexNet_4096 winner vs Alec_256 winner, and select the final winner, which is the winner of Round 1. -> `Alex_256_tanh_Adam`.
 
 ## Round 2:
 ## model: VGG16_4096 + Optimizer (Adam, Adam_amsgrad)
@@ -53,13 +53,13 @@ python3 customized_cnn_exe_all.py
 
 ## Round 3:
 ## model: Customized_cnn + Optimizer (Adam_amsgrad, SGD) + LR Scheduler
-### select the winner -> `Customized-cnn_ELU_Adam_amsgrad`.
+### select the winner -> `Customized-cnn_ELU_Adam_amsgrad`.(because it uses less epoch to train)
 
 ## Round 4:
 ## Round 1 vs Round 2 vs Round 3, and we should also consider "efficiency"
-### select the winner -> `Customized-cnn_ELU_Adam_amsgrad` -> We then do further optimization works on `Customized-cnn_ELU_Adam_amsgrad`.
+### select the winner -> `Alex_256_tanh_Adam` -> We then do further optimization works on `Alex_256_tanh_Adam`.
 
-## Optimization on `Customized-cnn_ELU_Adam_amsgrad`:
+## Optimization on `Alex_256_tanh_Adam`:
 ##
 
 ## Others:
