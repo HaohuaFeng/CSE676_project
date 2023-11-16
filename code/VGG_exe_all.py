@@ -85,9 +85,9 @@ if __name__ == '__main__':
         # todo: select optimizer
         # optimizer_name = "Adam_amsgrad"
         # optimizer_name = "Adam"
-
-        m.update_file_name(optimizer_name)
-        print('='*20 + '\n' + m.model_name + optimizer_name)
+        test_version = ''
+        m.update_file_name(optimizer_name + test_version)
+        print('='*20 + '\n' + m.model_name + optimizer_name + test_version)
         
         # initialize model, loss-function and optimizer
         model = m.EmotionCNN(num_classes=7)  # FER-2013 has 7 emotion class
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         optimizer_ = optimizer.create_optimizer(model.parameters(), optimizer_name)
 
         # training model
-        num_epochs = 2000
+        num_epochs = 200
 
         # early stopping variables
         stop_counter = 10  # number of count to trigger early stop
@@ -187,10 +187,10 @@ if __name__ == '__main__':
                 process.set_description(f"loss= {'{:.5f}'.format(loss_history_per_epoch[-1])} - "
                                             f"accuracy= {'{:.3%}'.format(accuracy_per_epoch[-1])}")
 
-            if early_stopping.early_stop:
-                print('\nTrigger Early Stopping\n')
-                early_stopping.early_stop = False
-                break
+            # if early_stopping.early_stop:
+            #     print('\nTrigger Early Stopping\n')
+            #     early_stopping.early_stop = False
+            #     break
 
         '''
         2. Save model and records
