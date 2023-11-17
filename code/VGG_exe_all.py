@@ -33,7 +33,7 @@ if __name__ == '__main__':
         '''
         data_transforms = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),
-            transforms.Resize((224, 224)),
+            transforms.Resize((128, 128)),
             transforms.ToTensor(),
         ])
 
