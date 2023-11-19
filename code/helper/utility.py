@@ -209,14 +209,49 @@ def create_augmentation_dataset(source_path, target_path, class_name):
         for class_ in os.listdir(source_path):
             target_class_path = target_path + class_ + '/'
             s = source_path + '/' + class_ + '/'
-            if class_name == class_:
+            if class_ in class_name:
                 shutil.copytree(s, target_class_path)
             elif not os.path.exists(target_class_path):
                 os.makedirs(target_class_path)
                 any_file = os.listdir(s)[0]
                 shutil.copy(s+any_file, target_class_path)
-        print(f'data augmentation dataset [{class_name}] created successfuly at [{target_class_path}]')
+        print(f'data augmentation dataset [{class_}] created successfuly at [{target_path}]')
     else:
         print(f'data augmentation is already created at [{target_path}]')
+
+
+def split_dataset_by_ratio(source_path, target_path, ratio=0.8):
+    if not os.path.exists(target_path):
+        os.mkdir(target_path)
+
+        train = os.path.join(target_path, 'train_data')
+        val = os.path.join(target_path, 'validation_data')
+        os.mkdir(train)
+        os.mkdir(val)
+
+        for class_folder in os.listdir(source_path):
+            class_folder_path = os.path.join(source_path, class_folder)
+            images = os.listdir(class_folder_path)
+            random.shuffle(images)
+            split_index = int(len(images) * ratio)
+            train_images = images[: split_index]
+            val_images = images[split_index:]
+            
+            train_class_path = os.path.join(train, class_folder)
+            os.mkdir(train_class_path)
+            val_class_path = os.path.join(val, class_folder)
+            os.mkdir(val_class_path)
+            
+            for image in train_images:
+                img_source_path = os.path.join(class_folder_path, image)
+                img_target_path = os.path.join(train_class_path, image)
+                shutil.copy(img_source_path, img_target_path)
+            
+            for image in val_images:
+                img_source_path = os.path.join(class_folder_path, image)
+                img_target_path = os.path.join(val_class_path, image)
+                shutil.copy(img_source_path, img_target_path)
+    else:
+        print(f'Target path [{target_path}] is already existed.')
         
     
