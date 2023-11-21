@@ -19,15 +19,14 @@ def update_file_name(optimizer_name):
 class AttentionModule(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(AttentionModule, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.conv3 = nn.Conv2d(out_channels, 1, kernel_size=1)
-
+        self.seq = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            nn.Conv2d(out_channels, 1, kernel_size=1))
     def forward(self, x):
-        x = nn.functional.relu(self.conv1(x))
-        x = nn.functional.relu(self.conv2(x))
-        attention = nn.functional.sigmoid(self.conv3(x))
-        return attention
+        a = self.seq(x)
+        a = nn.functional.sigmoid(x)
+        return x * a
 
 class DCNN(nn.Module):
     def __init__(self, num_classes, input_channel = 1):
@@ -47,9 +46,15 @@ class DCNN(nn.Module):
             nn.MaxPool2d(2),
             nn.Dropout(0.5),
         )
-        self.avg_pool_size = 15
+        self.avg_pool_size = 6
         self.FC = nn.Sequential(
             nn.Linear(256*(self.avg_pool_size**2), 1024, bias=True),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(1024, 2048, bias=True),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(2048, 1024, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Linear(1024, num_classes), 
@@ -59,8 +64,7 @@ class DCNN(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        attention = self.attention(x)
-        x = x * attention
+        x = self.attention(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.FC(x)
@@ -72,4 +76,4 @@ def EmotionCNN(num_classes=7, input_channel=3):
 from torchsummary import summary
 
 model = EmotionCNN(7, 1)
-# summary(model, (1, 224, 224))
+summary(model, (1, 128, 128))

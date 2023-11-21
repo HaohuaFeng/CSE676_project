@@ -38,6 +38,7 @@ class ResidualBlock(nn.Module):
                 nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels)
             )
+            print(stride, in_channels, out_channels)
 
     def forward(self, x):
         out = self.conv1(x)
@@ -64,12 +65,13 @@ class ResNet(nn.Module):
         self.layer4 = self.make_layer(block, 512, layers[3], stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.flattten = nn.Flatten()
         self.fc = nn.Linear(512, num_classes)
 
     def make_layer(self, block, out_channels, blocks, stride=1):
         layers = []
         layers.append(block(self.in_channels, out_channels, stride))
-        self.in_channels = out_channels
+        self.in_channels = out_channels # 64 -> 64 -> 128 -> 256 -> 512
         for _ in range(1, blocks):
             layers.append(block(out_channels, out_channels))
         return nn.Sequential(*layers)
@@ -86,10 +88,15 @@ class ResNet(nn.Module):
         x = self.layer4(x)
 
         x = self.avgpool(x)
-        x = x.view(x.size(0), -1)
+        x = self.flattten(x)
         x = self.fc(x)
         return x
 
 
-def EmotionCNN(ResidualBlock=ResidualBlock, layers=[2, 2, 2, 2], num_classes=7, input_channel=3):
+def EmotionCNN(ResidualBlock=ResidualBlock, layers=[1, 1, 1, 1], num_classes=7, input_channel=3):
     return ResNet(ResidualBlock, layers, num_classes, input_channel)
+
+from torchsummary import summary
+
+model = EmotionCNN(num_classes=7, input_channel=3)
+summary(model, (3, 224, 224))
