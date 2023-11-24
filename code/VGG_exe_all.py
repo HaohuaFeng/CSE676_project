@@ -7,7 +7,7 @@ from tqdm import tqdm
 import pickle
 from torch.utils.data import random_split
 import models.optimizer.optimizer as optimizer
-from models import VGG16_4096 as m
+from models.old import VGG16_4096 as m
 from helper.training_early_stop import EarlyStop
 import helper.utility as utility
 import os

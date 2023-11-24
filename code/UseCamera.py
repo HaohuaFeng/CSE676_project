@@ -3,7 +3,7 @@ from torchvision import transforms
 import cv2
 from helper import utility
 from PIL import Image
-from models import Alex_4096_relu as model
+from models.old import Alex_4096_relu as model
 
 
 def generate_input_frame(frame):

@@ -1,9 +1,9 @@
 import torch.nn as nn
 import torch
 
-# Reference: https://arxiv.org/ftp/arxiv/papers/2206/2206.09509.pdf
+# original
 # saving path, will change when read optimizer_name
-model_name = 'test_'
+model_name = 'custom/v0_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
@@ -22,11 +22,13 @@ class AttentionModule(nn.Module):
         super(AttentionModule, self).__init__()
         self.seq = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.ReLU(),
             nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-            nn.Conv2d(out_channels, 1, kernel_size=1))
+            nn.ReLU(),
+            nn.Conv2d(out_channels, 1, kernel_size=1),
+            nn.Sigmoid())
     def forward(self, x):
         a = self.seq(x)
-        a = nn.functional.sigmoid(x)
         return x * a
 
 
@@ -66,15 +68,15 @@ class DCNN(nn.Module):
             nn.MaxPool2d(2),
             nn.Dropout(0.25),)
 
-        self.avg_pool_size = 8
+        self.avg_pool_size = 6
         self.FC = nn.Sequential(
-            nn.Linear(512 * self.avg_pool_size**2, 4096),
-            nn.BatchNorm1d(4096),
+            nn.Linear(512 * self.avg_pool_size**2, 512),
+            nn.BatchNorm1d(512),
             nn.Dropout(0.25),
-            nn.Linear(4096, 1024),
-            nn.BatchNorm1d(1024),
+            nn.Linear(512, 512),
+            nn.BatchNorm1d(512),
             nn.Dropout(0.25),
-            nn.Linear(1024, num_classes),)
+            nn.Linear(512, num_classes),)
 
         self.attention = AttentionModule(512, 512)
         self.avgpool = nn.AdaptiveAvgPool2d(self.avg_pool_size)
@@ -82,8 +84,8 @@ class DCNN(nn.Module):
 
     def forward(self, x):
         x = self.features(x) # [batch, channel, size, size]
-        x = self.mhattention(x)
-        x = self.attention(x)
+        # x = self.attention(x)
+        # x = self.mhattention(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.FC(x)

@@ -1,4 +1,4 @@
-from models import Alex_256_relu, Alex_256_sigmoid, Alex_256_tanh, Alex_4096_relu, Alex_4096_tanh
+from models.old import Alex_256_relu, Alex_256_sigmoid, Alex_256_tanh, Alex_4096_relu, Alex_4096_tanh
 import models.optimizer.optimizer as optimizer
 
 import os
