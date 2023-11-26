@@ -130,18 +130,10 @@ def check_label_size(dataloader):
         labels = labels.tolist()
         for label in labels:
             label_counts[label] += 1
+    label_counts = dict(sorted(label_counts.items()))
     for label, count in label_counts.items():
         print(f"Label {label}: {count} samples")
     return label_counts
-
-
-def balance_weight(train_label_count, train_loader_len, batch_size):
-    class_weights = {}
-    for class_label, class_count in train_label_count.items():
-        class_weights[class_label] = (train_loader_len*batch_size / (len(train_label_count) * class_count))
-    class_weights = OrderedDict(class_weights.items())
-    print(f"adjusted weights: {class_weights}")
-    return class_weights
 
 
 def grayscale_transform_rotation(channel, size, degree):
