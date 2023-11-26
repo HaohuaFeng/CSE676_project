@@ -6,3 +6,5 @@ dataset3/
 .vscode
 *.pyc
 __pycache__/
+noisy_train_data/
+splite_data/
