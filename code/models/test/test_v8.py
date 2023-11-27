@@ -3,8 +3,9 @@ import torch.nn as nn
 import torch
 
 # rework attention block # https://zhuanlan.zhihu.com/p/563549058
+# add one more FC layer
 # saving path, will change when read optimizer_name
-model_name = 'custom/v7.2_'
+model_name = 'custom/v8'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
@@ -19,7 +20,7 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class AttentionModule(nn.Module):
-    def __init__(self, in_channel, reduction=16, kernel=7):
+    def __init__(self, in_channel, reduction=8, kernel=7):
         super(AttentionModule, self).__init__()
         self.amp = nn.AdaptiveMaxPool2d(1)
         self.aap = nn.AdaptiveAvgPool2d(1)
@@ -120,6 +121,9 @@ class DCNN(nn.Module):
             nn.Linear(256, 256),
             nn.BatchNorm1d(256),
             nn.Dropout(0.5),
+            nn.Linear(256, 256), # <----------
+            nn.BatchNorm1d(256),
+            nn.Dropout(0.5),
             nn.Linear(256, num_classes),)
 
         
@@ -151,13 +155,13 @@ class DCNN(nn.Module):
         
         x = self.attention2(x) # <----------
         
-        out = self.act(self.bn3(self.conv3(x)))
-        out = self.bn3_(self.conv3_(out))
-        res = self.bn_res3(self.res3(x))
-        out = self.act(out + res)
-        x = self.do3(self.mp3(out))
+        # out = self.act(self.bn3(self.conv3(x)))
+        # out = self.bn3_(self.conv3_(out))
+        # res = self.bn_res3(self.res3(x))
+        # out = self.act(out + res)
+        # x = self.do3(self.mp3(out))
         
-        x = self.attention3(x) # <----------
+        # x = self.attention3(x) # <----------
         
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
