@@ -2,9 +2,9 @@ from re import T
 import torch.nn as nn
 import torch
 
-# add multiple head attentions, but with less heads (4)
+# rework attention block # https://zhuanlan.zhihu.com/p/563549058
 # saving path, will change when read optimizer_name
-model_name = 'custom/v8_'
+model_name = 'custom/v7.2_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
@@ -19,18 +19,37 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class AttentionModule(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channel, reduction=16, kernel=7):
         super(AttentionModule, self).__init__()
-        self.seq = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+        self.amp = nn.AdaptiveMaxPool2d(1)
+        self.aap = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(in_channel, in_channel//reduction, bias=False),
             nn.ReLU(),
-            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(out_channels, 1, kernel_size=1),
-            nn.Sigmoid())
+            nn.Linear(in_channel//reduction, in_channel, bias=False)
+        )
+        self.conv = nn.Conv2d(in_channels=2, out_channels=1, 
+                              kernel_size=kernel, stride=1, padding=kernel//2, bias=False)
+        self.sigmoid = nn.Sigmoid()
+        
     def forward(self, x):
-        a = self.seq(x)
-        return x * a
+        max = self.amp(x)
+        max = max.view(max.size(0), -1)
+        max = self.fc(max)
+        avg = self.aap(x)
+        avg = avg.view(avg.size(0), -1)
+        avg = self.fc(avg)
+        channel_out = self.sigmoid(max + avg)
+        channel_out = channel_out.view(x.size(0), x.size(1), 1, 1)
+        channel_out = channel_out * x
+        
+        max_out, _ = torch.max(channel_out, dim=1, keepdim=True)
+        mean_out = torch.mean(channel_out, dim=1, keepdim=True)
+        out = torch.cat((max_out, mean_out), dim=1)
+        out = self.conv(out)
+        out = self.sigmoid(out)
+        out = out * channel_out
+        return out
 
 
 class multi_head_attention(nn.Module):
@@ -49,7 +68,6 @@ class multi_head_attention(nn.Module):
 class DCNN(nn.Module):
     def __init__(self, num_classes, input_channel = 1):
         super(DCNN, self).__init__()
-    
         self.conv0 = nn.Conv2d(in_channels=input_channel, out_channels=512, kernel_size=5, padding=2)
         self.bn0 = nn.BatchNorm2d(512)
         self.conv0_ = nn.Conv2d(512, 256, kernel_size=5, padding=2)
@@ -58,6 +76,8 @@ class DCNN(nn.Module):
         self.bn_res0 = nn.BatchNorm2d(256)
         self.mp0 = nn.MaxPool2d(2)
         self.do0 = nn.Dropout(0.5)
+        
+        self.attention0 = AttentionModule(256) # <------------------
             
         self.conv1 = nn.Conv2d(256, 128, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(128)
@@ -67,6 +87,8 @@ class DCNN(nn.Module):
         self.bn_res1 = nn.BatchNorm2d(128)
         self.mp1 = nn.MaxPool2d(2)
         self.do1 = nn.Dropout(0.5)
+        
+        self.attention1 = AttentionModule(128) # <------------------
             
         self.conv2 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(256)
@@ -77,6 +99,8 @@ class DCNN(nn.Module):
         self.mp2 = nn.MaxPool2d(2)
         self.do2 = nn.Dropout(0.5)
         
+        self.attention2 = AttentionModule(512) # <------------------
+        
         self.conv3 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(512)
         self.conv3_ = nn.Conv2d(512, 512, kernel_size=3, padding=1)
@@ -85,6 +109,8 @@ class DCNN(nn.Module):
         self.bn_res3 = nn.BatchNorm2d(512)
         self.mp3 = nn.MaxPool2d(2)
         self.do3 = nn.Dropout(0.5)
+        
+        self.attention3 = AttentionModule(512) # <------------------
 
         self.avg_pool_size = 4
         self.FC = nn.Sequential(
@@ -96,20 +122,6 @@ class DCNN(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(256, num_classes),)
 
-        self.attention0 = AttentionModule(256, 256)
-        self.mhattention0 = multi_head_attention(channel=256, heads=4)
-        self.resA0 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
-        self.bn_resA0 = nn.BatchNorm2d(256)
-        
-        self.attention1 = AttentionModule(128, 128)
-        self.mhattention1 = multi_head_attention(channel=128, heads=4)
-        self.resA1 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
-        self.bn_resA1 = nn.BatchNorm2d(128)
-        
-        self.attention2 = AttentionModule(512, 512)
-        self.mhattention2 = multi_head_attention(channel=512, heads=4)
-        self.resA2 = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.bn_resA2 = nn.BatchNorm2d(512)
         
         self.avgpool = nn.AdaptiveAvgPool2d(self.avg_pool_size)
         self.act = nn.ReLU(inplace=True)
@@ -121,11 +133,7 @@ class DCNN(nn.Module):
         out = self.act(out + res)
         x = self.do0(self.mp0(out))
         
-        # add attention block
-        out = self.act(self.attention0(x))
-        out = self.mhattention0(out)
-        res = self.bn_resA0(self.resA0(x))
-        x = self.act(out + res)
+        x = self.attention0(x) # <----------
         
         out = self.act(self.bn1(self.conv1(x)))
         out = self.bn1_(self.conv1_(out))
@@ -133,11 +141,7 @@ class DCNN(nn.Module):
         out = self.act(out + res)
         x = self.do1(self.mp1(out))
         
-        # add attention block
-        out = self.act(self.attention1(x))
-        out = self.mhattention1(out)
-        res = self.bn_resA1(self.resA1(x))
-        x = self.act(out + res)
+        x = self.attention1(x) # <----------
         
         out = self.act(self.bn2(self.conv2(x)))
         out = self.bn2_(self.conv2_(out))
@@ -145,17 +149,15 @@ class DCNN(nn.Module):
         out = self.act(out + res)
         x = self.do2(self.mp2(out))
         
-        # add attention block
-        out = self.act(self.attention2(x))
-        out = self.mhattention2(out)
-        res = self.bn_resA2(self.resA2(x))
-        x = self.act(out + res)
+        x = self.attention2(x) # <----------
         
         out = self.act(self.bn3(self.conv3(x)))
         out = self.bn3_(self.conv3_(out))
         res = self.bn_res3(self.res3(x))
         out = self.act(out + res)
         x = self.do3(self.mp3(out))
+        
+        x = self.attention3(x) # <----------
         
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
