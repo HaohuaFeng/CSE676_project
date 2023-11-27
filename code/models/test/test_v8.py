@@ -4,7 +4,7 @@ import torch
 
 # add multiple head attentions, but with less heads (4)
 # saving path, will change when read optimizer_name
-model_name = 'custom/v7_'
+model_name = 'custom/v8_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
@@ -101,10 +101,15 @@ class DCNN(nn.Module):
         self.resA0 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
         self.bn_resA0 = nn.BatchNorm2d(256)
         
-        self.attention1 = AttentionModule(512, 512)
-        self.mhattention1 = multi_head_attention(channel=512, heads=4)
-        self.resA1 = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.bn_resA1 = nn.BatchNorm2d(512)
+        self.attention1 = AttentionModule(128, 128)
+        self.mhattention1 = multi_head_attention(channel=128, heads=4)
+        self.resA1 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
+        self.bn_resA1 = nn.BatchNorm2d(128)
+        
+        self.attention2 = AttentionModule(512, 512)
+        self.mhattention2 = multi_head_attention(channel=512, heads=4)
+        self.resA2 = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.bn_resA2 = nn.BatchNorm2d(512)
         
         self.avgpool = nn.AdaptiveAvgPool2d(self.avg_pool_size)
         self.act = nn.ReLU(inplace=True)
@@ -120,7 +125,7 @@ class DCNN(nn.Module):
         out = self.act(self.attention0(x))
         out = self.mhattention0(out)
         res = self.bn_resA0(self.resA0(x))
-        out = self.act(out + res)
+        x = self.act(out + res)
         
         out = self.act(self.bn1(self.conv1(x)))
         out = self.bn1_(self.conv1_(out))
@@ -128,16 +133,23 @@ class DCNN(nn.Module):
         out = self.act(out + res)
         x = self.do1(self.mp1(out))
         
+        # add attention block
+        out = self.act(self.attention1(x))
+        out = self.mhattention1(out)
+        res = self.bn_resA1(self.resA1(x))
+        x = self.act(out + res)
+        
         out = self.act(self.bn2(self.conv2(x)))
         out = self.bn2_(self.conv2_(out))
         res = self.bn_res2(self.res2(x))
         out = self.act(out + res)
         x = self.do2(self.mp2(out))
         
-        out = self.act(self.attention1(x))
-        out = self.mhattention1(out)
-        res = self.bn_resA1(self.resA1(x))
-        out = self.act(out + res)
+        # add attention block
+        out = self.act(self.attention2(x))
+        out = self.mhattention2(out)
+        res = self.bn_resA2(self.resA2(x))
+        x = self.act(out + res)
         
         out = self.act(self.bn3(self.conv3(x)))
         out = self.bn3_(self.conv3_(out))

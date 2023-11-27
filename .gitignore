@@ -7,4 +7,6 @@ dataset3/
 *.pyc
 __pycache__/
 noisy_train_data/
+pepper_train_data/
 splite_data/
+splited_data/

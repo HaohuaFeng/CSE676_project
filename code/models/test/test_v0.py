@@ -84,8 +84,6 @@ class DCNN(nn.Module):
 
     def forward(self, x):
         x = self.features(x) # [batch, channel, size, size]
-        # x = self.attention(x)
-        # x = self.mhattention(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.FC(x)
