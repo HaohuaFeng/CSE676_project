@@ -46,7 +46,7 @@ def read_pickle_files(path):
     return data
 
 
-def model_validation(model, device, data_loader, pth_path, record_save_path, file_name, output_softmax=False, show=True, size=7):
+def model_validation(model, device, data_loader, pth_path, record_save_path, file_name, output_softmax=False, show=True, size=7, ext=True):
     model.load_state_dict(torch.load(pth_path))
     model.to(device)
     model.eval()
@@ -75,8 +75,12 @@ def model_validation(model, device, data_loader, pth_path, record_save_path, fil
     if show:
         plt.figure(figsize=(size, size))
     skplt.metrics.plot_confusion_matrix(y_true, y_pred, figsize=(size, size), normalize=True)
-    plt.savefig(record_save_path + "/confusion_matrix" + file_name + f'_{accuracy:{.5}}%' + ".png")
+    if ext:
+        plt.savefig(record_save_path + "/confusion_matrix" + file_name + f'_{accuracy:{.5}}%' + ".png")
+    else:
+        plt.savefig(record_save_path + "/confusion_matrix" + file_name + ".png")
     print(classification_report(y_true, y_pred))
+    return (correct / total)
 
 
 def plot_record(x, y, xlabel, ylabel, title, save_path, show=True):
