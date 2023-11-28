@@ -41,7 +41,13 @@ Comparison of winners from Rounds 1, 2, and 3, considering "efficiency". The fin
 The ultimate winner on the FER-2013 dataset is `Alex_256_Tanh_Adam`. Details of each round's comparison can be found in `code/comparison/fer2013`.
 
 The below graph is the model `Alex_256_Tanh_Adam` architecture:
-#### todo: upload model architecture graph
+
+<br>
+<img decoding="async" src="./document_picture/AlexNet_256_tanh_1.png" width="200"/>
+<img decoding="async" src="./document_picture/AlexNet_256_tanh_2.png" width="200"/>
+<img decoding="async" src="./document_picture/AlexNet_256_tanh_3.png" width="200"/>
+<br>
+
 Our model consists of four main parts. First, the "features" part, where we utilize BatchNorm2d for data normalization and pooling layers to selectively enhance the data quality. The second part is "avgpool", where AdaptiveAvgPool2d is employed to handle various image sizes, ensuring a uniform output size. The third section, "flatten," reshapes the data to suit the FC(fully connected) layer. Finally, the fourth part, "classifier," comprises several FC layers. Here, we discovered that using the Tanh activation function yields better results.
 
 ## For dataset RAF-DB, 22 models included:
