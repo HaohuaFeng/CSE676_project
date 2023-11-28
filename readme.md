@@ -77,11 +77,20 @@ The winner of Round 2 is `V7_Adam_[RAF(aug12)]`, as it achieved the highest accu
 <br>
 
 Based on Round 1 and Round 2, we know `DCNN_v5_Adam_[RAF(aug12)]` can perform better. 
-The below graph is the model `DCNN_v5_Adam_[RAF(aug12)]` architecture:
+
+
+However, the above comparison is based on validation accuracy. If we compare the best test accuracy in 60 epochs, we can find that `dcnn_v6_Adam_[RAF(aug12)]` performs the best. Since test accuracy better reflects the model's performance on unseen data (## todo: why?), a more reliable indicator of real-world performance than validation accuracy, we decide to use `dcnn_v6_Adam_[RAF(aug12)]` as our best model. 
+
+The below graph is "DCNN & CustomizeSNN Model Best Test Accuracy in 60 Epoch":
+<br>
+<img decoding="async" src="./document_picture/DCNN & CustomizeSNN Model Best Test Accuracy in 60 Epoch.png" width="800"/>
+<br>
+
+The below graph is the model `DCNN_v6_Adam_[RAF(aug12)]` architecture:
 #### todo: upload model architecture graph
 We named it "aug12" because we noticed that the model struggled to recognize classes 1 (disgust) and 2 (fear). To improve its performance, we applied data augmentation techniques such as flipping, cropping, and rotation specifically on these classes, enhancing the model's ability to accurately identify them.
 
-#### todo: DCNN_v5 explanation.
+#### todo: DCNN_v6 explanation.
 
 
 We further improve this model by using several optimization algorithms:
