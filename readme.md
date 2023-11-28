@@ -43,7 +43,7 @@ The ultimate winner on the FER-2013 dataset is `Alex_256_Tanh_Adam`. Details of 
 The best result on the FER-2013 dataset was only 65% accuracy. Based on insights from [this paper](https://arxiv.org/pdf/2306.09626v1.pdf), we concluded that the dataset might be problematic, leading us to switch our focus to the RAF-DB dataset. We also employed `DCNN` [[6]](https://arxiv.org/ftp/arxiv/papers/2206/2206.09509.pdf) on FER-2013, but the accuracy is still low (0.67). Therefore, we turn to RAF-DB.
 
 <br>
-<img decoding="async" src="/document_picture/v0_Adam_[FER(aug)]_val_accuracy_history.png" width="200"/>
+<img decoding="async" src="./document_picture/v0_Adam_[FER(aug)]_val_accuracy_history.png" width="200"/>
 <br>
 
 
