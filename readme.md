@@ -41,8 +41,8 @@ Comparison of winners from Rounds 1, 2, and 3, considering "efficiency". The fin
 The ultimate winner on the FER-2013 dataset is `Alex_256_Tanh_Adam`. Details of each round's comparison can be found in `code/comparison/fer2013`.
 
 The below graph is the model `Alex_256_Tanh_Adam` architecture:
-#### todo: model architecture, description and understanding of the algorithm
-We use ... because ....
+#### todo: upload model architecture graph
+Our model consists of four main parts. First, the "features" part, where we utilize BatchNorm2d for data normalization and pooling layers to selectively enhance the data quality. The second part is "avgpool", where AdaptiveAvgPool2d is employed to handle various image sizes, ensuring a uniform output size. The third section, "flatten," reshapes the data to suit the FC(fully connected) layer. Finally, the fourth part, "classifier," comprises several FC layers. Here, we discovered that using the Tanh activation function yields better results.
 
 ## For dataset RAF-DB, 22 models included:
 The best result on the FER-2013 dataset was only 65% accuracy. Based on insights from [this paper](https://arxiv.org/pdf/2306.09626v1.pdf), we concluded that the dataset might be problematic, leading us to switch our focus to the RAF-DB dataset. We also employed `DCNN` [[6]](https://arxiv.org/ftp/arxiv/papers/2206/2206.09509.pdf) on FER-2013, but the accuracy is still low (0.67). See the graph below.
@@ -78,8 +78,10 @@ The winner of Round 2 is `V7_Adam_[RAF(aug12)]`, as it achieved the highest accu
 
 Based on Round 1 and Round 2, we know `DCNN_v5_Adam_[RAF(aug12)]` can perform better. 
 The below graph is the model `DCNN_v5_Adam_[RAF(aug12)]` architecture:
-#### todo: model architecture, description and understanding of the algorithm
-We use ... because ....
+#### todo: upload model architecture graph
+We named it "aug12" because we noticed that the model struggled to recognize classes 1 (disgust) and 2 (fear). To improve its performance, we applied data augmentation techniques such as flipping, cropping, and rotation specifically on these classes, enhancing the model's ability to accurately identify them.
+
+#### todo: DCNN_v5 explanation.
 
 
 We further improve this model by using several optimization algorithms:
@@ -98,8 +100,8 @@ For the RAF-DB dataset, we implemented `augmentation techniques such as rotation
 # 5. Metrics and Experimental Results:
 The experimental results and metrics are already elaborated in the "2. Model Description" section. You can also check the `code/comparison` folder for more experimental results.
 
-When we apply our model to real world, 
-## todo: show your predicted results
+When we apply our model to the real world, 
+#### todo: show camera predicted results
 
 # 6. Contributions and GitHub:
 
@@ -109,5 +111,5 @@ PinKuan Hsieh (40%): Design the basic algorithms, Compare results, Report
 
 Github public repository: https://github.com/HaohuaFeng/CSE676_project
 
-## TODO: Others:
+## TODO: Other details?:
 ### compare early stop param v.s. non-early stop params, empirical loss v.s. general loss
