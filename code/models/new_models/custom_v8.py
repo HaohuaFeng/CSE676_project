@@ -5,7 +5,7 @@ import torch
 # rework attention block # https://zhuanlan.zhihu.com/p/563549058
 # add one more FC layer
 # saving path, will change when read optimizer_name
-model_name = 'custom/v8'
+model_name = 'custom/v8_'
 pth_save_path = ''
 pth_manual_save_path = ''
 record_save_path = ''
@@ -20,7 +20,7 @@ def update_file_name(optimizer_name):
     record_save_path = './model_data/' + new_name
 
 class AttentionModule(nn.Module):
-    def __init__(self, in_channel, reduction=8, kernel=7):
+    def __init__(self, in_channel, reduction=16, kernel=7):
         super(AttentionModule, self).__init__()
         self.amp = nn.AdaptiveMaxPool2d(1)
         self.aap = nn.AdaptiveAvgPool2d(1)
@@ -113,15 +113,12 @@ class DCNN(nn.Module):
         
         self.attention3 = AttentionModule(512) # <------------------
 
-        self.avg_pool_size = 4
+        self.avg_pool_size = 8
         self.FC = nn.Sequential(
             nn.Linear(512 * self.avg_pool_size**2, 256),
             nn.BatchNorm1d(256),
             nn.Dropout(0.5),
             nn.Linear(256, 256),
-            nn.BatchNorm1d(256),
-            nn.Dropout(0.5),
-            nn.Linear(256, 256), # <----------
             nn.BatchNorm1d(256),
             nn.Dropout(0.5),
             nn.Linear(256, num_classes),)
@@ -133,35 +130,31 @@ class DCNN(nn.Module):
     def forward(self, x):
         out = self.act(self.bn0(self.conv0(x)))
         out = self.bn0_(self.conv0_(out))
+        # out = self.attention0(out) # <----------
         res = self.bn_res0(self.res0(x))
         out = self.act(out + res)
         x = self.do0(self.mp0(out))
         
-        x = self.attention0(x) # <----------
-        
         out = self.act(self.bn1(self.conv1(x)))
         out = self.bn1_(self.conv1_(out))
+        # out = self.attention1(out) # <----------
         res = self.bn_res1(self.res1(x))
         out = self.act(out + res)
         x = self.do1(self.mp1(out))
         
-        x = self.attention1(x) # <----------
-        
         out = self.act(self.bn2(self.conv2(x)))
         out = self.bn2_(self.conv2_(out))
+        # out = self.attention2(out) # <----------
         res = self.bn_res2(self.res2(x))
         out = self.act(out + res)
         x = self.do2(self.mp2(out))
         
-        x = self.attention2(x) # <----------
-        
-        # out = self.act(self.bn3(self.conv3(x)))
-        # out = self.bn3_(self.conv3_(out))
-        # res = self.bn_res3(self.res3(x))
-        # out = self.act(out + res)
-        # x = self.do3(self.mp3(out))
-        
-        # x = self.attention3(x) # <----------
+        out = self.act(self.bn3(self.conv3(x)))
+        out = self.bn3_(self.conv3_(out))
+        # out = self.attention3(out) # <----------
+        res = self.bn_res3(self.res3(x))
+        out = self.act(out + res)
+        x = self.do3(out)#self.mp3(out))
         
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
