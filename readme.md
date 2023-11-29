@@ -10,45 +10,36 @@ For detailed information about the data engineering techniques we applied to our
 
 # 2. Model Description:
 
-## For dataset FER-2013, 15 models included:
-On the first dataset, FER-2013, we utilized `AlexNet` [[4]](https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), `VGG-16` [[5]](https://arxiv.org/pdf/1409.1556.pdf), and our `customized-CNN`. We adjusted parameters in each model, such as different FC-layer sizes (256 input, 4096 input), different optimizer functions (Adam, SGD), various optimization methods (AMSGrad, weight adjustment), and activation functions (ReLU, Sigmoid, Tanh, ELU). For specifics on the model structures, please refer to our code in `/models/old_models`. We conducted 4 rounds of comparison under this dataset, adhering to specific rules: 
+## For dataset FER-2013, 14 models included:
+On the first dataset, FER-2013, we utilized `AlexNet` [[4]](https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), `VGG-16` [[5]](https://arxiv.org/pdf/1409.1556.pdf), and our `customized-CNN`. We adjusted parameters in each model, such as different FC-layer sizes (256 input, 4096 input), different optimizer functions (Adam, SGD), various optimization methods (AMSGrad, weight adjustment), and activation functions (ReLU, Sigmoid, Tanh, ELU). For specifics on the model structures, please refer to our code in `/models/old_models`. We conducted the comparison under this dataset, adhering to specific rules: 
 
 **The comparison rules are primarily based on validation accuracy. If two models exhibit nearly identical validation accuracies, we select the one whose accuracy is more stable across each round.**
 
-### Round 1:
-1. Model: AlexNet_256 with Activation Functions in FC (Sigmoid, Tanh, ReLU) and Optimizers (Adam, SGD). Winner selected: Alex_256_ReLU_Adam.
-   
-2. Model: AlexNet_4096 with Activation Functions in FC (Tanh, ReLU) and Optimizers (Adam, SGD). Winner selected: Alex_4096_ReLU_Adam.
 
-We then compared the winners of AlexNet_4096 and AlexNet_256, selecting the final Round 1 winner: `Alex_256_Tanh_Adam`.
+### comparison:
+Model: AlexNet_256 with Activation Functions in FC (Sigmoid, Tanh, ReLU) and Optimizers (Adam, SGD) vs AlexNet_4096 with Activation Functions in FC (Tanh, ReLU) and Optimizers (Adam, SGD) vs VGG16_4096 with Optimizers (Adam, Adam_amsgrad) vs Customized-CNN with Optimizer (Adam_amsgrad, SGD) and LR Scheduler
 
-### Round 2:
-Model: VGG16_4096 with Optimizers (Adam, Adam_amsgrad). Winner selected: `VGG16_4096_Adam_amsgrad` for its greater stability.
-
-### Round 3:
-Model: Customized-CNN with Optimizer (Adam_amsgrad, SGD) and LR Scheduler. Winner selected: `Customized-CNN_ELU_Adam_amsgrad` for requiring fewer epochs to train.
-
-### Round 4 (final round):
-Comparison of winners from Rounds 1, 2, and 3, considering "efficiency". The final winner selected: `Alex_256_Tanh_Adam`. Further optimization was then carried out on this model. You can see the validation accuracy graph of round 4 and the confusion matrix of `Alex_256_Tanh_Adam`.
+The winner is `Alex_256_ReLU_Adam`. The validation accuracy is Further optimization was then carried out on this model. You can see the validation accuracy graph of these 14 models and the confusion matrix of `Alex_256_ReLU_Adam`.
 
 <br>
-<img decoding="async" src="./document_picture/fer2013_val_accuracy.png" width="400"/>
+<img decoding="async" src="./document_picture/fer2013_all_val_acc.png" width="400"/>
 <br>
 <br>
-<img decoding="async" src="./document_picture/fer2013_confusion_matrix.png" width="400"/>
-<br>
-
-The ultimate winner on the FER-2013 dataset is `Alex_256_Tanh_Adam`. Details of each round's comparison can be found in `code/comparison/fer2013`.
-
-The below graph is the model `Alex_256_Tanh_Adam` architecture:
-
-<br>
-<img decoding="async" src="./document_picture/AlexNet_256_tanh_1.png" width="200"/>
-<img decoding="async" src="./document_picture/AlexNet_256_tanh_2.png" width="200"/>
-<img decoding="async" src="./document_picture/AlexNet_256_tanh_3.png" width="200"/>
+<img decoding="async" src="./document_picture/Alex_256_ReLU_Adam_confusion_matrix.png" width="400"/>
 <br>
 
-Our model consists of four main parts. First, the "features" part, where we utilize BatchNorm2d for data normalization and pooling layers to selectively enhance the data quality. The second part is "avgpool", where AdaptiveAvgPool2d is employed to handle various image sizes, ensuring a uniform output size. The third section, "flatten," reshapes the data to suit the FC(fully connected) layer. Finally, the fourth part, "classifier," comprises several FC layers. Here, we discovered that using the Tanh activation function yields better results.
+The ultimate winner on the FER-2013 dataset is `Alex_256_ReLU_Adam`, and the accuracy is 64.6%. Although several models achieved the same level of accuracy, `Alex_256_ReLU_Adam` was the first to reach this benchmark, leading us to select it as our preferred model. Details of the comparison code can be found in `code/comparison/fer2013`.
+
+The below graph is the model `Alex_256_ReLU_Adam` architecture:
+
+<br>
+<img decoding="async" src="./document_picture/AlexNet_256_ReLU_1.png" width="200"/>
+<img decoding="async" src="./document_picture/AlexNet_256_ReLU_2.png" width="200"/>
+<img decoding="async" src="./document_picture/AlexNet_256_ReLU_3.png" width="200"/>
+<img decoding="async" src="./document_picture/AlexNet_256_ReLU_4.png" width="200"/>
+<br>
+
+Our model consists of four main parts. First, the "features" part, where we utilize BatchNorm2d for data normalization and pooling layers to selectively enhance the data quality. The second part is "avgpool", where AdaptiveAvgPool2d is employed to handle various image sizes, ensuring a uniform output size. The third section, "flatten," reshapes the data to suit the FC(fully connected) layer. Finally, the fourth part, "classifier," comprises several FC layers. Here, we discovered that using the ReLU activation function yields better results.
 
 ## For dataset RAF-DB, 22 models included:
 The best result on the FER-2013 dataset was only 65% accuracy. Based on insights from [this paper](https://arxiv.org/pdf/2306.09626v1.pdf), we concluded that the dataset might be problematic, leading us to switch our focus to the RAF-DB dataset. We also employed `DCNN` [[6]](https://arxiv.org/ftp/arxiv/papers/2206/2206.09509.pdf) on FER-2013, but the accuracy is still low (0.67). See the graph below.
