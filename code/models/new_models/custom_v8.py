@@ -2,8 +2,7 @@ from re import T
 import torch.nn as nn
 import torch
 
-# rework attention block # https://zhuanlan.zhihu.com/p/563549058
-# add one more FC layer
+# base on v7.2, rework on attention
 # saving path, will change when read optimizer_name
 model_name = 'custom/v8_'
 pth_save_path = ''
@@ -28,11 +27,10 @@ class AttentionModule(nn.Module):
             nn.Linear(in_channel, in_channel//reduction, bias=False),
             nn.ReLU(),
             nn.Linear(in_channel//reduction, in_channel, bias=False)
-        )
-        self.conv = nn.Conv2d(in_channels=2, out_channels=1, 
+            )
+        self.conv = nn.Conv2d(in_channels=2, out_channels=1,
                               kernel_size=kernel, stride=1, padding=kernel//2, bias=False)
         self.sigmoid = nn.Sigmoid()
-        
     def forward(self, x):
         max = self.amp(x)
         max = max.view(max.size(0), -1)
@@ -43,7 +41,6 @@ class AttentionModule(nn.Module):
         channel_out = self.sigmoid(max + avg)
         channel_out = channel_out.view(x.size(0), x.size(1), 1, 1)
         channel_out = channel_out * x
-        
         max_out, _ = torch.max(channel_out, dim=1, keepdim=True)
         mean_out = torch.mean(channel_out, dim=1, keepdim=True)
         out = torch.cat((max_out, mean_out), dim=1)
@@ -51,7 +48,6 @@ class AttentionModule(nn.Module):
         out = self.sigmoid(out)
         out = out * channel_out
         return out
-
 
 class multi_head_attention(nn.Module):
     def __init__(self, channel, heads):
@@ -77,8 +73,6 @@ class DCNN(nn.Module):
         self.bn_res0 = nn.BatchNorm2d(256)
         self.mp0 = nn.MaxPool2d(2)
         self.do0 = nn.Dropout(0.25)
-        
-        self.attention0 = AttentionModule(256) # <------------------
             
         self.conv1 = nn.Conv2d(256, 128, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(128)
@@ -88,8 +82,6 @@ class DCNN(nn.Module):
         self.bn_res1 = nn.BatchNorm2d(128)
         self.mp1 = nn.MaxPool2d(2)
         self.do1 = nn.Dropout(0.25)
-        
-        self.attention1 = AttentionModule(128) # <------------------
             
         self.conv2 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(256)
@@ -100,8 +92,6 @@ class DCNN(nn.Module):
         self.mp2 = nn.MaxPool2d(2)
         self.do2 = nn.Dropout(0.25)
         
-        self.attention2 = AttentionModule(512) # <------------------
-        
         self.conv3 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(512)
         self.conv3_ = nn.Conv2d(512, 512, kernel_size=3, padding=1)
@@ -111,8 +101,6 @@ class DCNN(nn.Module):
         self.mp3 = nn.MaxPool2d(2)
         self.do3 = nn.Dropout(0.25)
         
-        self.attention3 = AttentionModule(512) # <------------------
-        
         self.conv4 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
         self.bn4 = nn.BatchNorm2d(512)
         self.conv4_ = nn.Conv2d(512, 512, kernel_size=3, padding=1)
@@ -121,10 +109,6 @@ class DCNN(nn.Module):
         self.bn_res4 = nn.BatchNorm2d(512)
         self.mp4 = nn.MaxPool2d(2)
         self.do4 = nn.Dropout(0.25)
-        
-        self.attention4 = AttentionModule(512) # <------------------
-        
-        self.attention5 = AttentionModule(512) # <------------------
 
         self.avg_pool_size = 2
         self.FC = nn.Sequential(
@@ -137,46 +121,54 @@ class DCNN(nn.Module):
             nn.Linear(256, num_classes),)
 
         
+        self.attention0 = AttentionModule(256)
+        self.attention1 = AttentionModule(128)
+        self.attention2 = AttentionModule(512)
+        self.attention3 = AttentionModule(512)
+        self.attention4 = AttentionModule(512)
+        
+        self.mhattention = multi_head_attention(channel=512, heads=8)
+        self.resA = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.bn_resA = nn.BatchNorm2d(512)
+        
         self.avgpool = nn.AdaptiveAvgPool2d(self.avg_pool_size)
         self.act = nn.ReLU(inplace=True)
 
     def forward(self, x):
         out = self.act(self.bn0(self.conv0(x)))
-        out = self.bn0_(self.conv0_(out))
-        out = self.attention0(out) # <----------
+        out = self.act(self.bn0_(self.conv0_(out)))
+        out = self.attention0(out)
         res = self.bn_res0(self.res0(x))
         out = self.act(out + res)
-        x = self.do0(self.mp0(out)) #32
+        x = self.do0(self.mp0(out))
         
         out = self.act(self.bn1(self.conv1(x)))
-        out = self.bn1_(self.conv1_(out))
-        out = self.attention1(out) # <----------
+        out = self.act(self.bn1_(self.conv1_(out)))
+        out = self.attention1(out)
         res = self.bn_res1(self.res1(x))
         out = self.act(out + res)
-        x = self.do1(self.mp1(out)) #16
+        x = self.do1(self.mp1(out))
         
         out = self.act(self.bn2(self.conv2(x)))
-        out = self.bn2_(self.conv2_(out))
-        out = self.attention2(out) # <----------
+        out = self.act(self.bn2_(self.conv2_(out)))
+        out = self.attention2(out)
         res = self.bn_res2(self.res2(x))
         out = self.act(out + res)
-        x = self.do2(self.mp2(out))#8
+        x = self.do2(self.mp2(out))
         
         out = self.act(self.bn3(self.conv3(x)))
-        out = self.bn3_(self.conv3_(out))
-        out = self.attention3(out) # <----------
+        out = self.act(self.bn3_(self.conv3_(out)))
+        out = self.attention3(out)
         res = self.bn_res3(self.res3(x))
         out = self.act(out + res)
-        x = self.do3(self.mp3(out)) #4
+        x = self.do3(self.mp3(out))
         
         out = self.act(self.bn4(self.conv4(x)))
-        out = self.bn4_(self.conv4_(out))
-        out = self.attention3(out) # <----------
+        out = self.act(self.bn4_(self.conv4_(out)))
+        out = self.attention4(out)
         res = self.bn_res4(self.res4(x))
         out = self.act(out + res)
-        x = self.do4(self.mp4(out)) #2
-        
-        x = self.attention5(x) # <----------
+        x = self.do4(self.mp4(out))
         
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
