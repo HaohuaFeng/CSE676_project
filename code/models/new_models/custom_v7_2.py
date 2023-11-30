@@ -138,7 +138,7 @@ class DCNN(nn.Module):
 def EmotionCNN(num_classes=7, input_channel=3):
     return DCNN(num_classes, input_channel)
 
-from torchsummary import summary
+# from torchsummary import summary
 
-model = EmotionCNN(7, 1)
-summary(model, (1, 64, 64))
+# model = EmotionCNN(7, 1)
+# summary(model, (1, 64, 64))
