@@ -22,7 +22,7 @@ Model: AlexNet_256 with Activation Functions in FC (Sigmoid, Tanh, ReLU) and Opt
 The winner is `Alex_256_ReLU_Adam`. The validation accuracy is Further optimization was then carried out on this model. You can see the validation accuracy graph of these 14 models and the confusion matrix of `Alex_256_ReLU_Adam`.
 
 <br>
-<img decoding="async" src="./document_picture/fer2013_all_val_acc.png" width="400"/>
+<img decoding="async" src="./document_picture/fer2013_all_val_acc.png" width="800"/>
 <br>
 <br>
 <img decoding="async" src="./document_picture/Alex_256_ReLU_Adam_confusion_matrix.png" width="400"/>
@@ -76,7 +76,7 @@ The winner of Round 2 is `V7_Adam_[RAF(aug12)]`, as it achieved the highest accu
 Based on Round 1 and Round 2, we know `DCNN_v5_Adam_[RAF(aug12)]` can perform better. 
 
 
-However, the above comparison is based on validation accuracy. If we compare the best test accuracy in 60 epochs, we can find that `dcnn_v6_Adam_[RAF(aug12)]` performs the best. Since test accuracy better reflects the model's performance on unseen data (## todo: why?), a more reliable indicator of real-world performance than validation accuracy, we decide to use `dcnn_v6_Adam_[RAF(aug12)]` as our best model. 
+However, the above comparison is based on validation accuracy. If we compare the best test accuracy in 60 epochs, we can find that `dcnn_v6_Adam_[RAF(aug12)]` performs the best. Since test accuracy more accurately represents the model's performance on unseen data—owing to the fact that the validation set is smaller and may not fully capture real-world scenarios—we have chosen `dcnn_v6_Adam_[RAF(aug12)]` as our best model.
 
 The below graph is "DCNN & CustomizeSNN Model Best Test Accuracy in 60 Epoch":
 <br>
@@ -90,8 +90,15 @@ We named it "aug12" because we noticed that the model struggled to recognize cla
 #### todo: DCNN_v6 explanation.
 
 
-We further improve this model by using several optimization algorithms:
-#### todo:
+## Further optimization
+We choose the top 3 test accuracy model `dcnn_v6_Adam_[RAF(aug12)]`, `custom_v7.2_Adam_[RAF(aug12)]` and `custom_v6.1_Adam_[RAF(aug12)]` as our candidates to do further optimization. Below is the result:
+<br>
+<img decoding="async" src="./document_picture/optimized_all_validation_accuracy.png" width="800"/>
+<br>
+
+We can see the best accuracy model is `custom/v7.2_Adam_[RAF(AutoAug12x5),FER(AutoAug12x5)]_LR_[L2:0.01]`
+
+#### todo: explain the optimization method
 
 
 
@@ -113,7 +120,7 @@ When we apply our model to the real world,
 
 Haohua Feng (60%): Design the advanced algorithms, Study RAF-DB, Do GPU computation
 
-PinKuan Hsieh (40%): Design the basic algorithms, Compare results, Report
+PinKuan Hsieh (40%): Design the basic algorithms, Analyze results, Report
 
 Github public repository: https://github.com/HaohuaFeng/CSE676_project
 
