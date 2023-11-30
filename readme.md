@@ -96,7 +96,7 @@ We choose the top 3 test accuracy model `dcnn_v6_Adam_[RAF(aug12)]`, `custom_v7.
 <img decoding="async" src="./document_picture/optimized_all_validation_accuracy.png" width="800"/>
 <br>
 
-We can see the best accuracy model is `custom/v7.2_Adam_[RAF(AutoAug12x5),FER(AutoAug12x5)]_LR_[L2:0.01]`
+We can see the best accuracy model is `custom_v7.2_Adam_[RAF(AutoAug12x5),FER(AutoAug12x5)]_LR_[L2:0.01]`
 
 #### todo: explain the optimization method
 
