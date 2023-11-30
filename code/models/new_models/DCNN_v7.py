@@ -1,7 +1,7 @@
 from re import T
 import torch.nn as nn
 
-# add relu act to some conv2d
+# remove relu act to some conv2d
 # Reference: https://arxiv.org/ftp/arxiv/papers/2206/2206.09509.pdf
 # saving path, will change when read optimizer_name
 model_name = 'DCNN/v7_'

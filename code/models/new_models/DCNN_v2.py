@@ -48,15 +48,22 @@ class DCNN(nn.Module):
         super(DCNN, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(in_channels=input_channel, out_channels=32, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Dropout(0.5),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=0, stride=1), 
+            nn.ReLU(),
             nn.MaxPool2d(2),
             nn.MaxPool2d(2),
             nn.Dropout(0.5),
@@ -74,6 +81,7 @@ class DCNN(nn.Module):
         self.attention = AttentionModule(256, 256)
         self.mhattention = multi_head_attention(channel=256, heads=8)
         self.avgpool = nn.AdaptiveAvgPool2d(self.avg_pool_size)
+        self.act = nn.ReLU()
 
     def forward(self, x):
         x = self.features(x)

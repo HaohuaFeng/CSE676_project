@@ -86,20 +86,20 @@ class DCNN(nn.Module):
         
 
     def forward(self, x):
-        out = self.conv0(x)
+        out = self.act(self.conv0(x))
         out = self.conv0_(out)
         res = self.bn_res0(self.res0(x))
         out = self.act(out + res)
         x = self.do0(self.mp0(out))
         
-        out = self.conv1(x)
+        out = self.act(self.conv1(x))
         out = self.conv1_(out)
-        out = self.conv1__(out)
+        out = self.act(self.conv1__(out))
         res = self.bn_res1(self.res1(x))
         out = self.act(out + res)
         x = self.mp1(out)
         
-        out = self.conv2(x)
+        out = self.act(self.conv2(x))
         out = self.conv2_(out)
         res = self.bn_res2(self.res2(x))
         out = self.act(out + res)
