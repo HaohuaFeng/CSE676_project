@@ -2,7 +2,7 @@ from re import T
 import torch.nn as nn
 import torch
 
-# base on v7.2, rework on attention
+# base on v7.2, rework on attention: CBAM（Convolutional Block Attention Module）
 # saving path, will change when read optimizer_name
 model_name = 'custom/v8_'
 pth_save_path = ''

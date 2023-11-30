@@ -2,7 +2,7 @@ from re import T
 import torch.nn as nn
 import torch
 
-# change last FE output to 512, FE output to 256, dropout 0.25 -> 0.5
+# change  FE output to 256, dropout 0.25 -> 0.5
 # saving path, will change when read optimizer_name
 model_name = 'custom/v6_'
 pth_save_path = ''

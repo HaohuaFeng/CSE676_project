@@ -3,16 +3,17 @@ from torchvision import transforms
 import cv2
 from helper import utility
 from PIL import Image
-from models.old import Alex_4096_relu as model
+from  models.new_models import custom_v7_2 as model
 
 
 def generate_input_frame(frame):
     # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert to grayscale
     grayscale_frame = Image.fromarray(frame)  # convert tp PIL image
     frame_transforms = transforms.Compose([
-        transforms.Grayscale(num_output_channels=3),  # turn the graph to single color channel
-        transforms.Resize((227, 227)),
+        transforms.Grayscale(num_output_channels=1),  # turn the graph to single color channel
+        transforms.Resize((64, 64)),
         transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5], std=[0.5])  # normalize
     ])
     return frame_transforms(grayscale_frame)
 
@@ -36,8 +37,8 @@ def camera(width=1920, high=1080):
 
     face_detect = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-    m = model.EmotionCNN(num_classes=7, input_channel=3)
-    m.load_state_dict(torch.load('./model_data/Alex_4096_relu_Adam_NoWeightBalance_allclass_all_3/model.pth'))
+    m = model.EmotionCNN(num_classes=7, input_channel=1)
+    m.load_state_dict(torch.load('./model_data/custom/v7.2_Adam_[RAF(AutoAug12x5),FER(AutoAug12x5)]_LR_WB(A)_[L2:0.01]/best_loss_model.pth'))
     m.to(device)
     m.eval()
     labels = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
@@ -54,7 +55,7 @@ def camera(width=1920, high=1080):
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             face_image = None
-            faces = face_detect.detectMultiScale(gray, scaleFactor=1.25, minNeighbors=5, minSize=(50, 50))
+            faces = face_detect.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=3, minSize=(50, 50))
             for (x, y, w, h) in faces:
                 face_image = frame[y:y+h, x:x+w]
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
