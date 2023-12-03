@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # Add residual connection for attention layer
 # saving path, will change when read optimizer_name

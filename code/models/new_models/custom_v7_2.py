@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # base on v7, remove attention
 # saving path, will change when read optimizer_name

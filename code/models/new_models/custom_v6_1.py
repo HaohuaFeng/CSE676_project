@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # base on V6, remove residual connection of attention
 # saving path, will change when read optimizer_name

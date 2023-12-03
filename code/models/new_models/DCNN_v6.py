@@ -1,4 +1,3 @@
-from re import T
 import torch.nn as nn
 
 # change dropout rate 0.5 -> 0.65

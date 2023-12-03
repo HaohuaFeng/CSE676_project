@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # Add one more residual block
 # saving path, will change when read optimizer_name

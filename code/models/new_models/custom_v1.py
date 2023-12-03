@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # add attention to focus important pixel
 # saving path, will change when read optimizer_name
