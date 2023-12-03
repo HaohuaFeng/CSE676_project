@@ -1,4 +1,4 @@
-from models.old import Alex_256_relu, Alex_256_sigmoid, Alex_256_tanh, Alex_4096_relu, Alex_4096_tanh
+from models.old_models import Alex_256_relu, Alex_256_sigmoid, Alex_256_tanh, Alex_4096_relu, Alex_4096_tanh
 import models.optimizer.optimizer as optimizer
 
 import os
@@ -43,9 +43,9 @@ if __name__ == '__main__':
                 transforms.ToTensor(),
             ])
 
-            train_dataset = datasets.ImageFolder('../dataset/splited_data/train_data', transform=data_transforms)
-            val_dataset = datasets.ImageFolder('../dataset/splited_data/validation_data', transform=data_transforms)
-            test_dataset = datasets.ImageFolder('../dataset/test', transform=data_transforms)
+            train_dataset = datasets.ImageFolder('./dataset/split/train_data', transform=data_transforms)
+            val_dataset = datasets.ImageFolder('./dataset/split/validation_data', transform=data_transforms)
+            test_dataset = datasets.ImageFolder('./dataset/test', transform=data_transforms)
 
 
             train_loader = DataLoader(train_dataset, batch_size=32,shuffle=True, num_workers=8, pin_memory=True)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             model = m.EmotionCNN(num_classes=7)  # FER-2013 has 7 emotion class
             if not os.path.exists(m.record_save_path):
                 os.makedirs(m.record_save_path)
-            criterion = nn.CrossEntropyLoss()
+            criterion = nn.NLLLoss()
             optimizer_ = optimizer.create_optimizer(model.parameters(), optimizer_name)
 
             # training model
