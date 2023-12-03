@@ -1,4 +1,3 @@
-from re import T
 import torch.nn as nn
 import torch
 
@@ -145,5 +144,5 @@ def EmotionCNN(num_classes=7, input_channel=3):
 
 from torchsummary import summary
 
-model = EmotionCNN(7, 1)
-summary(model, (1, 64, 64))
+model = EmotionCNN(7, 1).to('cuda')
+summary(model, (1, 64, 64), )
