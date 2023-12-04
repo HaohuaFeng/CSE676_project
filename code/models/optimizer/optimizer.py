@@ -1,5 +1,6 @@
 import torch.optim as optim
 
+# use for a single run of training and evaluating all model together
 def create_optimizer(parameters, optimizer_type):
     if optimizer_type == 'Adam':
         optimizer = optim.Adam(parameters, lr=0.0001)

@@ -1,8 +1,9 @@
 import torch
 
 class EarlyStop:
-    """use to determine early stop
-        >>> EarlyStop(path to store model, stop count, different, type  = "loss" or "accuracy")
+    """
+    use to determine early stop
+    EarlyStop(path to store model, stop count, different, type  = "loss" or "accuracy")
     """
     def __init__(self, path, loss_path, stop_count, diff, diff_loss, type = "loss"):
         self.path = path
@@ -35,6 +36,7 @@ class EarlyStop:
             self.save_loss(model, loss_value)
             self.early_stop = False
         else:
+            # use val loss value as the metric
             if  loss_value > self.best_value_loss - self.loss_different:
                 if self.type == "loss":
                     self.counter += 1
@@ -47,6 +49,7 @@ class EarlyStop:
                 if self.type == "loss":
                     self.counter = 0
 
+            # use val accuracy as the metric
             if  value < self.best_value + self.different:
                 if self.type == "accuracy":
                     self.counter += 1
