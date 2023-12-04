@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # add relu act to some conv2d
 # saving path, will change when read optimizer_name

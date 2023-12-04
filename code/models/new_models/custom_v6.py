@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # change  FE output to 256, dropout 0.25 -> 0.5
 # saving path, will change when read optimizer_name

@@ -1,4 +1,3 @@
-from re import T
 import torch.nn as nn
 
 # add batchnorm to some layers

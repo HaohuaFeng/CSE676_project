@@ -1,4 +1,3 @@
-from re import T
 import torch.nn as nn
 
 # remove relu act to some conv2d

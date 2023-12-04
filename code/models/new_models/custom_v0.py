@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # original
 # saving path, will change when read optimizer_name

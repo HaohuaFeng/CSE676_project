@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 
 # add multi head attention
 # saving path, will change when read optimizer_name
