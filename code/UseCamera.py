@@ -125,7 +125,7 @@ def camera(path, width=1080, high=720):
                                     font_scale, (0, 0, 255), thickness, cv2.LINE_AA)
 
             # render the frame with face box and text of probabilities of 7 emotions
-            cv2.imshow('emotion recognition', frame)
+            cv2.imshow('emotion recognition | Press key "esc" to quit', frame)
 
     capture.release()
 
