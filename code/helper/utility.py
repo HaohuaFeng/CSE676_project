@@ -11,6 +11,7 @@ from collections import defaultdict, OrderedDict
 from torchvision import datasets, transforms
 import os
 import shutil
+import cv2
 
 
 def select_devices(use_cudnn_if_avaliable):
@@ -198,33 +199,38 @@ def grayscale_transform_shear(channel, size, value=(-45, 45)):
     return transformer
 
 
+# create a copy of class in list class_name, use for augmentation transform later
+# store in '../augmentation_dataset'
 def create_augmentation_dataset(source_path, target_path, class_name):
-    target_path = '../augmentation_dataset/' + target_path + '/'
+    target_path = os.path.join('../augmentation_dataset', target_path)
     if not os.path.exists(target_path):
         os.mkdir(target_path)
         for class_ in os.listdir(source_path):
-            target_class_path = target_path + class_ + '/'
-            s = source_path + '/' + class_ + '/'
+            target_class_path = os.path.join(target_path, class_)
+            s = os.path.join(source_path, class_)
+            # copy entire folder if class name is in list
             if class_ in class_name:
                 shutil.copytree(s, target_class_path)
+            # to use as input for dataloader, 
+            # other class not in class_name need to contain at least 1 image
             elif not os.path.exists(target_class_path):
                 os.makedirs(target_class_path)
                 any_file = os.listdir(s)[0]
-                shutil.copy(s+any_file, target_class_path)
+                any_file_path = os.path.join(s, any_file)
+                shutil.copy(any_file_path, target_class_path)
         print(f'data augmentation dataset [{class_}] created successfuly at [{target_path}]')
     else:
         print(f'data augmentation is already created at [{target_path}]')
 
 
+# split dataset by ratio, use to split training set to trainingset and validation set
 def split_dataset_by_ratio(source_path, target_path, ratio=0.8):
     if not os.path.exists(target_path):
         os.mkdir(target_path)
-
         train = os.path.join(target_path, 'train_data')
         val = os.path.join(target_path, 'validation_data')
         os.mkdir(train)
         os.mkdir(val)
-
         for class_folder in os.listdir(source_path):
             class_folder_path = os.path.join(source_path, class_folder)
             images = os.listdir(class_folder_path)
@@ -249,5 +255,66 @@ def split_dataset_by_ratio(source_path, target_path, ratio=0.8):
                 shutil.copy(img_source_path, img_target_path)
     else:
         print(f'Target path [{target_path}] is already existed.')
+
+
+# Function to add gaussian noise to an image
+def add_gaussian_noise(image, mean=0, sigma=25):
+    row, col, ch = image.shape
+    gauss = np.random.normal(mean, sigma, (row, col, ch))
+    noisy = np.clip(image + gauss, 0, 255)
+    return noisy.astype(np.uint8)
+
+# Function to add salt-and-pepper noise to an image
+def add_salt_and_pepper_noise(image, salt_prob=0.02, pepper_prob=0.02):
+    row, col, ch = image.shape
+    noisy = np.copy(image)
+    # Add salt noise
+    salt_pixels = np.random.rand(row, col, ch) < salt_prob
+    noisy[salt_pixels] = 255
+    # Add pepper noise
+    pepper_pixels = np.random.rand(row, col, ch) < pepper_prob
+    noisy[pepper_pixels] = 0
+    return noisy.astype(np.uint8)
         
-    
+# function to add noise to image, will not override if the output path is existed.
+# type: 0-gaussian, 1-pepper+salt, 3-mix with gaussian and pepper-salt
+# prob: the probability to apply noise to an image
+def add_noise(input_path, output_path, target_classes, prob, type):
+    total = 0
+    generate = 0
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+        # Iterate through the images in the input folder
+        for classfoldername in os.listdir(input_path):
+            class_path = os.path.join(input_path, classfoldername)
+            for filename in os.listdir(class_path):
+                total += 1
+                image_path = os.path.join(class_path, filename)
+                original_image = cv2.imread(image_path)
+                # Add noise to the image
+                noisy_image = None
+                if type == 0:
+                    noisy_image = add_gaussian_noise(original_image)
+                elif type == 1:
+                    noisy_image = add_salt_and_pepper_noise(original_image)
+                elif type == 2:
+                    select = random.random()
+                    if select > 0.5:
+                        noisy_image = add_gaussian_noise(original_image)
+                    else:
+                        noisy_image = add_salt_and_pepper_noise(original_image)
+                # Save the noisy image to the output folder
+                output_class_path = os.path.join(output_path, classfoldername)
+                if not os.path.exists(output_class_path):
+                    os.mkdir(output_class_path)
+                r = random.random()
+                if r > prob and (classfoldername in target_classes):
+                    generate += 1
+                    image_output_path = os.path.join(output_class_path,f"noisy_{filename}")
+                    cv2.imwrite(image_output_path, noisy_image)
+                else:
+                    image_output_path = os.path.join(output_class_path,f"{filename}")
+                    cv2.imwrite(image_output_path, original_image)
+        print(f'Total: {total}, generate: {generate}')
+    else:
+        print(f'folder [{output_path}] is already existed')
