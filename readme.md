@@ -92,11 +92,10 @@ The below graph is "DCNN & CustomizeSNN Model Best Test Accuracy in 60 Epoch":
 
 The below graph is the model `DCNN_v6_Adam_[RAF(aug12)]` architecture:
 
-#### todo: upload model architecture graph
+<img decoding="async" src="./document_picture/DCNN_v6_Adam_[RAF(aug12)].png" width="400"/>
+<br>
 
 We named it "aug12" because we noticed that the model struggled to recognize classes 1 (disgust) and 2 (fear). To improve its performance, we applied data augmentation techniques such as flipping, cropping, and rotation specifically on these classes, enhancing the model's ability to accurately identify them.
-
-#### todo: DCNN_v6 explanation.
 
 ## Further optimization
 
@@ -107,7 +106,7 @@ We choose the top 3 test accuracy model `dcnn_v6_Adam_[RAF(aug12)]`, `custom_v7.
 
 We can see the best accuracy model is `custom_v7.2_Adam_[RAF(AutoAug12x5),FER(AutoAug12x5)]_LR_[L2:0.01]`
 
-#### todo: explain the optimization method
+For further details, please refer [CSE676_project_report](./document_picture/CSE676_project_report.pdf) and [CSE676_project_slides](./document_picture/CSE676_project_slides.pdf).
 
 # 3. Loss Function:
 
@@ -131,18 +130,16 @@ For the RAF-DB dataset, we implemented `augmentation techniques such as rotation
 
 The experimental results and metrics are already elaborated in the "2. Model Description" section. You can also check the `code/comparison` folder for more experimental results.
 
-When we apply our model to the real world,
-
-#### todo: show camera predicted results
+When we apply our model to the real world, you can see our model can predict human emotion correctly.
+<br>
+<img decoding="async" src="./document_picture/camera_demo.png" width="400"/>
+<br>
 
 # 6. Contributions and GitHub:
 
-Haohua Feng (60%): Design the advanced algorithms, Study RAF-DB, Do GPU computation
+Haohua Feng(60%): Trying different combination of approach to improve the model accuracy, Tweek hyper parameter, Process data, Doing experiment on GPU
 
-PinKuan Hsieh (40%): Design the basic algorithms, Analyze results, Report
+PinKuan Hsieh(40%): Design the algorithm, Process data, Collect dataset, Analyze results, Report & PPT
+
 
 Github public repository: https://github.com/HaohuaFeng/CSE676_project
-
-## TODO: Other details?:
-
-### compare early stop param v.s. non-early stop params, empirical loss v.s. general loss
