@@ -1,12 +1,5 @@
 *.pth
 augmentation_dataset/
-dataset/
-dataset2_MMAFEDB/
-dataset3/
 .vscode
 *.pyc
 __pycache__/
-noisy_train_data/
-pepper_train_data/
-splite_data/
-splited_data/
