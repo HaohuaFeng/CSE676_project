@@ -129,11 +129,7 @@ For the RAF-DB dataset, we implemented `augmentation techniques such as rotation
 # 5. Metrics and Experimental Results:
 
 The experimental results and metrics are already elaborated in the "2. Model Description" section. You can also check the `code/comparison` folder for more experimental results.
-
-When we apply our model to the real world, you can see our model can predict human emotion correctly.
-<br>
-<img decoding="async" src="./document_picture/camera_demo.png" width="400"/>
-<br>
+We also intergrate the model with web-cam feed `code\UseCamera.py`. Using CV2 face detection to capture human face emontion as input frame that pass to model, use model output as prediction to achieve emontion recognition. The output can be extended to other usage. 
 
 # 6. Contributions and GitHub:
 
